@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/button_main_menu_settings"
+		android:icon="@drawable/button_settings"
+		android:title="@string/button_settings"
+	/>
+	<item
+		android:id="@+id/button_main_menu_quit"
+		android:icon="@drawable/button_quit"
+		android:title="@string/button_quit"
+	/>	
+</menu>

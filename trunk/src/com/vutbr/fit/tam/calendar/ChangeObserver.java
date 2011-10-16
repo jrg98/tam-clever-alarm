@@ -16,10 +16,8 @@ import android.os.Handler;
  */
 public class ChangeObserver extends ContentObserver {
 
-	//public static final String CALENDAR_INSTANCES_URI = "content://com.android.calendar/instances/";
-	
-	private static final String CALENDAR_INSTANCES_URI_ECLAIR = "content://com.android.calendar/instances/";
-	private static final String CALENDAR_INSTANCES_URI_FROYO = "content://calendar/instances/";
+	private static final String CALENDAR_INSTANCES_URI_ECLAIR = "content://calendar/instances/";
+	private static final String CALENDAR_INSTANCES_URI_FROYO = "content://com.android.calendar/instances/";
 		
 	Context context;
 	

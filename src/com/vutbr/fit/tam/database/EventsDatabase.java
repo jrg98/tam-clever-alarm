@@ -8,8 +8,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.format.DateUtils;
-import android.util.Log;
+import android.os.Build;
 
 import com.vutbr.fit.tam.calendar.Calendar;
 import com.vutbr.fit.tam.calendar.Event;
@@ -26,26 +25,20 @@ public class EventsDatabase {
 	public static final int STATUS_BUSY = 0;
 	public static final int STATUS_DONT_CARE = 0;
 	
-	private final String EVENTS_CONTENT_URI_OLD = "content://calendar/instances/when"; 
-	private final String EVENTS_CONTENT_URI_NEW = "content://com.android.calendar/instances/when"; 
-	
-	private String EVENTS_CONTENT_URI = null; 
+	private final String EVENTS_CONTENT_URI_ECLAIR = "content://calendar/instances/when"; 
+	private final String EVENTS_CONTENT_URI_FROYO = "content://com.android.calendar/instances/when"; 
 	
 	private Context context;
 	
 	public EventsDatabase (Context context) {
 		this.context = context;
-		this.setCalendarURI();
-		
 	}
 	
-	private void setCalendarURI() {
-		
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		if (currentapiVersion > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
-			this.EVENTS_CONTENT_URI = this.EVENTS_CONTENT_URI_NEW;
+	public String getCalendarURI() {
+		if (Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
+			return this.EVENTS_CONTENT_URI_ECLAIR;
 		} else{
-			this.EVENTS_CONTENT_URI = this.EVENTS_CONTENT_URI_OLD;
+			return this.EVENTS_CONTENT_URI_FROYO;
 		}
 	}
 	
@@ -61,8 +54,7 @@ public class EventsDatabase {
 			}
 			
 					
-			Uri.Builder builder = Uri.parse(this.EVENTS_CONTENT_URI).buildUpon();
-			long now = new Date().getTime();
+			Uri.Builder builder = Uri.parse(this.getCalendarURI()).buildUpon();
 			ContentUris.appendId(builder, from.getTime());
 			ContentUris.appendId(builder, to.getTime());
 

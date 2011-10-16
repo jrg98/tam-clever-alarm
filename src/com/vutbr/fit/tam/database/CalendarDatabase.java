@@ -10,6 +10,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 
 /**
  * Database class for handling calendars
@@ -22,10 +23,9 @@ public class CalendarDatabase {
 	/***
 	 * URI of calendar data
 	 */
-	private final String CALENDAR_CONTENT_URI_OLD = "content://calendar/calendars";
-	private final String CALENDAR_CONTENT_URI_NEW = "content://com.android.calendar/calendars";
+	private static final String CALENDAR_CONTENT_URI_ECLAIR = "content://calendar/calendars";
+	private static final String CALENDAR_CONTENT_URI_FROYO = "content://com.android.calendar/calendars";
 	
-	private String CALENDAR_CONTENT_URI = null;
 	/**
 	 * Application context
 	 */
@@ -45,18 +45,14 @@ public class CalendarDatabase {
 		
         this.calendarAdapter = new CalendarAdapter(this.context);
         this.calendarAdapter.open();
-        
-        this.setCalendarURI();
-	
 	}
 	
-	private void setCalendarURI() {
+	private String getCalendarURI() {
 		
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		if (currentapiVersion > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
-			this.CALENDAR_CONTENT_URI = this.CALENDAR_CONTENT_URI_NEW;
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
+			return CalendarDatabase.CALENDAR_CONTENT_URI_ECLAIR;
 		} else{
-			this.CALENDAR_CONTENT_URI = this.CALENDAR_CONTENT_URI_OLD;
+			return CalendarDatabase.CALENDAR_CONTENT_URI_FROYO;
 		}
 	}
 	
@@ -76,7 +72,7 @@ public class CalendarDatabase {
     		// Fetch a list of all calendars synchronized with the device, their display names and whether the
     		// user has them selected for display.
     		
-    		Uri cal = Uri.parse(this.CALENDAR_CONTENT_URI);;
+    		Uri cal = Uri.parse(this.getCalendarURI());;
     		//Toast.makeText(this, cal.toString(), Toast.LENGTH_LONG).show();
     		
     		final Cursor cursor = contentResolver.query(cal,

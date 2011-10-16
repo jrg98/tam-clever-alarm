@@ -158,15 +158,7 @@ public class CleverAlarm extends Activity implements OnClickListener {
     private void registerCalendarChangeObserver () {
         ChangeObserver observer = new ChangeObserver(new Handler(), this);
         ContentResolver cr = this.getApplicationContext().getContentResolver();
-        
-        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		if (currentapiVersion > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
-			cr.registerContentObserver(Uri.parse(ChangeObserver.CALENDAR_INSTANCES_URI_NEW), true, observer);
-		} else{
-			cr.registerContentObserver(Uri.parse(ChangeObserver.CALENDAR_INSTANCES_URI_OLD), true, observer);
-		}
-        
-        
+        cr.registerContentObserver(Uri.parse(ChangeObserver.getCalendarURI()), true, observer);      
     }
     
     private void showSettings () {

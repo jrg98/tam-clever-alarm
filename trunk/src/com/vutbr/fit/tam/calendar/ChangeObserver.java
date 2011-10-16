@@ -5,6 +5,7 @@ import com.vutbr.fit.tam.R;
 
 import android.content.Context;
 import android.database.ContentObserver;
+import android.os.Build;
 import android.os.Handler;
 
 /**
@@ -17,28 +18,21 @@ public class ChangeObserver extends ContentObserver {
 
 	//public static final String CALENDAR_INSTANCES_URI = "content://com.android.calendar/instances/";
 	
-	public static final String CALENDAR_INSTANCES_URI_NEW = "content://com.android.calendar/instances/";
-	public static final String CALENDAR_INSTANCES_URI_OLD = "content://calendar/instances/";
+	private static final String CALENDAR_INSTANCES_URI_ECLAIR = "content://com.android.calendar/instances/";
+	private static final String CALENDAR_INSTANCES_URI_FROYO = "content://calendar/instances/";
 		
-	private String CALENDAR_INSTANCES_URI = null;	
-			
 	Context context;
 	
 	public ChangeObserver(Handler handler, Context context) {
 		super(handler);
 		this.context = context;
-		this.setCalendarURI();
-		
 	}
 
-	private void setCalendarURI() {
-		
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		
-		if (currentapiVersion > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
-			this.CALENDAR_INSTANCES_URI = this.CALENDAR_INSTANCES_URI_NEW;
+	public static String getCalendarURI() {
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
+			return ChangeObserver.CALENDAR_INSTANCES_URI_ECLAIR;
 		} else{
-			this.CALENDAR_INSTANCES_URI = this.CALENDAR_INSTANCES_URI_OLD;
+			return ChangeObserver.CALENDAR_INSTANCES_URI_FROYO;
 		}
 	}
 	

@@ -1,22 +1,13 @@
 package com.vutbr.fit.tam.activity;
 
-import java.security.acl.NotOwnerException;
 import java.util.Date;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.appwidget.AppWidgetManager;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,6 +26,8 @@ import com.vutbr.fit.tam.calendar.ChangeObserver;
 import com.vutbr.fit.tam.calendar.Event;
 import com.vutbr.fit.tam.database.EventsDatabase;
 import com.vutbr.fit.tam.nofitication.NotificationHelper;
+import com.vutbr.fit.tam.widget.WidgetUpdateServise;
+
 
 
 public class CleverAlarm extends Activity implements OnClickListener {
@@ -44,6 +37,10 @@ public class CleverAlarm extends Activity implements OnClickListener {
 	 */
 	TextView textView;
 	Button queryButton;
+	Button alarmButton;
+	Button ringingButton;
+	
+
 	
 	NotificationHelper notificationHelper;
 	
@@ -58,11 +55,18 @@ public class CleverAlarm extends Activity implements OnClickListener {
         this.textView = (TextView) this.findViewById(R.id.textView);
         
         if (this.textView == null)
-        Toast.makeText(this, "NULL", Toast.LENGTH_SHORT).show();
-        this.queryButton = (Button)   this.findViewById(R.id.queryButton);
+        	Toast.makeText(this, "NULL", Toast.LENGTH_SHORT).show();
+        
+        this.queryButton = (Button) this.findViewById(R.id.queryButton);
+        this.alarmButton = (Button) this.findViewById(R.id.alarmButton);
+        this.ringingButton = (Button) this.findViewById(R.id.ringingButton);
+
         
         // 	append onClickListener, which is this class
         this.queryButton.setOnClickListener(this);
+        this.alarmButton.setOnClickListener(this);
+        this.ringingButton.setOnClickListener(this);
+
         
         // TODO not sure this is working always as requested, eg. app is in background
         // maybe a service will be better
@@ -75,7 +79,7 @@ public class CleverAlarm extends Activity implements OnClickListener {
         		R.string.app_name, 
         		R.string.notification_example, 
         		NotificationHelper.TYPE_APPLICATION);
-        
+
     }
 
     
@@ -84,6 +88,7 @@ public class CleverAlarm extends Activity implements OnClickListener {
      */
     private void query () {
 
+ 
     	EventsDatabase database = new EventsDatabase(this);
     	
     	Date from = new Date();
@@ -92,6 +97,7 @@ public class CleverAlarm extends Activity implements OnClickListener {
     	to.setTime(to.getTime() + DateUtils.DAY_IN_MILLIS);
     	
 		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_AVAILABLE)) {
+
 			int color = event.getColor();
 			String title = event.getTitle();
 			Date begin = event.getBeginDate();
@@ -106,14 +112,25 @@ public class CleverAlarm extends Activity implements OnClickListener {
 			textView.setText(text);
 		
 		}
+		
     	
     }
+    
+
+    
    
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.queryButton:
 				this.query();
 				break;
+			case R.id.alarmButton:
+				this.showAlarm();
+				break;
+			case R.id.ringingButton:
+				this.showRinging();
+				break;
+		
 		}
 	}
 
@@ -141,7 +158,15 @@ public class CleverAlarm extends Activity implements OnClickListener {
     private void registerCalendarChangeObserver () {
         ChangeObserver observer = new ChangeObserver(new Handler(), this);
         ContentResolver cr = this.getApplicationContext().getContentResolver();
-        cr.registerContentObserver(Uri.parse(ChangeObserver.CALENDAR_INSTANCES_URI), true, observer);
+        
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentapiVersion > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
+			cr.registerContentObserver(Uri.parse(ChangeObserver.CALENDAR_INSTANCES_URI_NEW), true, observer);
+		} else{
+			cr.registerContentObserver(Uri.parse(ChangeObserver.CALENDAR_INSTANCES_URI_OLD), true, observer);
+		}
+        
+        
     }
     
     private void showSettings () {
@@ -152,6 +177,16 @@ public class CleverAlarm extends Activity implements OnClickListener {
     private void quit() {
     	this.notificationHelper.cancel(NotificationHelper.TYPE_APPLICATION);
     	this.finish();
+    }
+    
+    private void showAlarm () {
+    	Intent intent = new Intent(this, Alarm.class);
+    	this.startActivityForResult(intent, 0);
+    }
+    
+    private void showRinging () {
+    	Intent intent = new Intent(this, Ringing.class);
+    	this.startActivityForResult(intent, 0);
     }
     
 }

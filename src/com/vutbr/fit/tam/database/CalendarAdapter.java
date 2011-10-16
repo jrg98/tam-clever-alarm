@@ -53,7 +53,8 @@ public class CalendarAdapter {
 
 	public long insertCalendar(Calendar c) {
 		ContentValues initialValues = createContentValues(Integer.parseInt(c.getId()), c.getTitle(),c.isEnabled());
-		return this.database.insertWithOnConflict(CalendarHelper.DATABASE_TABLE, null, initialValues, SQLiteDatabase.CONFLICT_REPLACE);
+		//return this.database.insertWithOnConflict(CalendarHelper.DATABASE_TABLE, null, initialValues, SQLiteDatabase.CONFLICT_REPLACE);
+		return this.database.insert(CalendarHelper.DATABASE_TABLE, null, initialValues);
 	}
 
 	/**

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import com.vutbr.fit.tam.calendar.Calendar;
 import com.vutbr.fit.tam.calendar.Event;
@@ -25,19 +26,33 @@ public class EventsDatabase {
 	public static final int STATUS_BUSY = 0;
 	public static final int STATUS_DONT_CARE = 0;
 	
+	private final String EVENTS_CONTENT_URI_OLD = "content://calendar/instances/when"; 
+	private final String EVENTS_CONTENT_URI_NEW = "content://com.android.calendar/instances/when"; 
 	
-	private final String EVENTS_CONTENT_URI = "content://com.android.calendar/instances/when";
+	private String EVENTS_CONTENT_URI = null; 
 	
 	private Context context;
 	
 	public EventsDatabase (Context context) {
 		this.context = context;
+		this.setCalendarURI();
+		
+	}
+	
+	private void setCalendarURI() {
+		
+		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentapiVersion > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
+			this.EVENTS_CONTENT_URI = this.EVENTS_CONTENT_URI_NEW;
+		} else{
+			this.EVENTS_CONTENT_URI = this.EVENTS_CONTENT_URI_OLD;
+		}
 	}
 	
 	public Set<Event> getEvents(Date from, Date to, int status) {
   		Set<Calendar> calendars = new CalendarDatabase(this.context).loadCalendars();
   		Set<Event> events = new HashSet<Event>();
-		
+  		
 		// For each calendar, display all the events from the previous day to the end of next day.		
 		for (Calendar calendar : calendars) {
 			
@@ -45,6 +60,7 @@ public class EventsDatabase {
 				continue;
 			}
 			
+					
 			Uri.Builder builder = Uri.parse(this.EVENTS_CONTENT_URI).buildUpon();
 			long now = new Date().getTime();
 			ContentUris.appendId(builder, from.getTime());
@@ -63,8 +79,17 @@ public class EventsDatabase {
 				final Date begin = new Date(eventCursor.getLong(1));
 				final Date end = new Date(eventCursor.getLong(2));
 				final Boolean allDay = !eventCursor.getString(3).equals("0");
-				final boolean busy = eventCursor.getString(4).equals("1");
+				
+				//final boolean busy = eventCursor.getString(4).equals("1");
+				
+				boolean busy = false;
+				
 				final int color = Integer.parseInt(eventCursor.getString(5));
+				
+				// EDIT Android 2.1
+				if (eventCursor.getString(4) != null) {
+					busy = eventCursor.getString(4).equals("1");
+				}
 				
 				if ((status == EventsDatabase.STATUS_AVAILABLE && !busy) ||
 					(status == EventsDatabase.STATUS_BUSY && busy) ||

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center"
+    android:background="@drawable/widget_bg"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" android:baselineAligned="false" android:layout_width="wrap_content">
+    
+      	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout0" android:layout_width="wrap_content" android:layout_weight="0.2" android:paddingTop="27dp" android:paddingLeft="15dp">
+    		<ImageView android:layout_height="wrap_content" android:id="@+id/imageView1" android:layout_width="wrap_content"
+    		   android:src="@drawable/icon_widget" android:adjustViewBounds="true"></ImageView>
+    	</LinearLayout>
+    
+    	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout1" android:layout_width="wrap_content" android:layout_weight="0.6" android:orientation="vertical" android:paddingTop="23dp" android:paddingLeft="10dp">
+        	<TextView android:layout_height="wrap_content" android:text="Dalsi udalost" android:id="@+id/tvNextEvent" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:layout_width="wrap_content"></TextView>
+        	<TextView android:layout_height="wrap_content" android:text="Dalsi zmena" android:id="@+id/tvNextChange" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:layout_width="wrap_content"></TextView>
+    	</LinearLayout>
+    	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout2" android:layout_width="wrap_content" android:layout_weight="0.2" android:paddingTop="27dp" android:paddingRight="15dp">
+    		<ImageButton android:layout_height="wrap_content" android:id="@+id/switchButton" android:layout_width="wrap_content" android:src="@drawable/button_quit"></ImageButton>
+    	</LinearLayout>
+
+</LinearLayout>

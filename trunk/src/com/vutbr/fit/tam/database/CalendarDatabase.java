@@ -22,8 +22,10 @@ public class CalendarDatabase {
 	/***
 	 * URI of calendar data
 	 */
-	private final String CALENDAR_CONTENT_URI = "content://com.android.calendar/calendars";
+	private final String CALENDAR_CONTENT_URI_OLD = "content://calendar/calendars";
+	private final String CALENDAR_CONTENT_URI_NEW = "content://com.android.calendar/calendars";
 	
+	private String CALENDAR_CONTENT_URI = null;
 	/**
 	 * Application context
 	 */
@@ -43,7 +45,19 @@ public class CalendarDatabase {
 		
         this.calendarAdapter = new CalendarAdapter(this.context);
         this.calendarAdapter.open();
+        
+        this.setCalendarURI();
 	
+	}
+	
+	private void setCalendarURI() {
+		
+		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentapiVersion > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
+			this.CALENDAR_CONTENT_URI = this.CALENDAR_CONTENT_URI_NEW;
+		} else{
+			this.CALENDAR_CONTENT_URI = this.CALENDAR_CONTENT_URI_OLD;
+		}
 	}
 	
 	/**

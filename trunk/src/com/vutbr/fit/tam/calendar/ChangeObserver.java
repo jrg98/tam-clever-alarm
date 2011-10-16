@@ -15,16 +15,34 @@ import android.os.Handler;
  */
 public class ChangeObserver extends ContentObserver {
 
-	public static final String CALENDAR_INSTANCES_URI = "content://com.android.calendar/instances/";
+	//public static final String CALENDAR_INSTANCES_URI = "content://com.android.calendar/instances/";
 	
+	public static final String CALENDAR_INSTANCES_URI_NEW = "content://com.android.calendar/instances/";
+	public static final String CALENDAR_INSTANCES_URI_OLD = "content://calendar/instances/";
+		
+	private String CALENDAR_INSTANCES_URI = null;	
+			
 	Context context;
 	
 	public ChangeObserver(Handler handler, Context context) {
 		super(handler);
 		this.context = context;
+		this.setCalendarURI();
+		
 	}
 
-    public boolean deliverSelfNotifications() {
+	private void setCalendarURI() {
+		
+		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		
+		if (currentapiVersion > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
+			this.CALENDAR_INSTANCES_URI = this.CALENDAR_INSTANCES_URI_NEW;
+		} else{
+			this.CALENDAR_INSTANCES_URI = this.CALENDAR_INSTANCES_URI_OLD;
+		}
+	}
+	
+	public boolean deliverSelfNotifications() {
         return super.deliverSelfNotifications();
     }
  

@@ -37,6 +37,14 @@
         <activity android:name=".activity.Ringing" />
         
         <service android:name=".widget.WidgetUpdateServise"></service>
+        
+        <receiver android:name=".AlarmBootReceiver">
+      		<intent-filter>
+        		<action android:name="android.intent.action.BOOT_COMPLETED" />
+      		</intent-filter>
+    	</receiver>
+    	<receiver android:name=".AlarmLauncher"></receiver>
+    	<service android:name=".AlarmUpdater"></service>
 
     </application>
     

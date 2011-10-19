@@ -22,8 +22,8 @@ import com.vutbr.fit.tam.calendar.Event;
 public class EventsDatabase {
 
 	public static final int STATUS_AVAILABLE = 0;
-	public static final int STATUS_BUSY = 0;
-	public static final int STATUS_DONT_CARE = 0;
+	public static final int STATUS_BUSY = 1;
+	public static final int STATUS_DONT_CARE = 2;
 	
 	private final String EVENTS_CONTENT_URI_ECLAIR = "content://calendar/instances/when"; 
 	private final String EVENTS_CONTENT_URI_FROYO = "content://com.android.calendar/instances/when"; 
@@ -35,7 +35,7 @@ public class EventsDatabase {
 	}
 	
 	public String getCalendarURI() {
-		if (Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.ECLAIR_MR1) {
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
 			return this.EVENTS_CONTENT_URI_ECLAIR;
 		} else{
 			return this.EVENTS_CONTENT_URI_FROYO;

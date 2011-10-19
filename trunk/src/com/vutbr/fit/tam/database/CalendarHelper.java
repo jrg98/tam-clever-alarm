@@ -18,16 +18,6 @@ import android.util.Log;
 public class CalendarHelper extends SQLiteOpenHelper {
 
 	/**
-	 * Database name
-	 */
-	private static final String DATABASE_NAME = "alarm_database";
-	
-	/**
-	 * Database version number
-	 */
-	private static final int DATABASE_VERSION = 1;
-	
-	/**
 	 * Database table name
 	 */
 	protected static final String DATABASE_TABLE = "calendar_settings";
@@ -55,7 +45,7 @@ public class CalendarHelper extends SQLiteOpenHelper {
 	 * @param context
 	 */
 	public CalendarHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		super(context, Database.NAME, null, Database.VERSION);
 	}
 	
 	/**

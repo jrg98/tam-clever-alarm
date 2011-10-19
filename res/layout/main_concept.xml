@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+    <TextView android:text="Hlavna obrazovka: nastavenie budiku - cas, melodia, vypnout/zpanout v TAB1, nastavenie spanku - cas, vyp/zap\n
+    settings: zmena zvonenia - checkbox, nastavenie zvonenia v spanku\n
+    widget - tlacitko na vypnutie zvonenia\n\n
+    napad2: hlavna obrazovka: zoznam 7 dni - kazdy aktivna polozka(Po-Ne)\n
+    pri rozkliknuti polozky - zobrazenie prveho eventu, nastavenie predstihu, nastavenie spanku, zap/vyp\n
+    settings - nastavenie ringtone, nastavenie vyzvanania v spanku, nastavenie default predstih a spanok"
+    
+     android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+  
+</LinearLayout>

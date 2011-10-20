@@ -36,9 +36,9 @@ public class EventsDatabase {
 	
 	public String getCalendarURI() {
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
-			return this.EVENTS_CONTENT_URI_ECLAIR;
-		} else{
 			return this.EVENTS_CONTENT_URI_FROYO;
+		} else{
+			return this.EVENTS_CONTENT_URI_ECLAIR;
 		}
 	}
 	

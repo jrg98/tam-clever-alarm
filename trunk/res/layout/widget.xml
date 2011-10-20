@@ -3,19 +3,33 @@
     android:layout_gravity="center"
     android:background="@drawable/widget_bg"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" android:baselineAligned="false" android:layout_width="wrap_content">
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    android:layout_width="wrap_content"
+    android:minHeight="52dp" android:weightSum="1">
     
-      	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout0" android:layout_width="wrap_content" android:layout_weight="0.2" android:paddingTop="27dp" android:paddingLeft="15dp">
-    		<ImageView android:layout_height="wrap_content" android:id="@+id/imageView1" android:layout_width="wrap_content"
-    		   android:src="@drawable/icon_widget" android:adjustViewBounds="true"></ImageView>
+      	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout0" android:layout_width="55dp" android:paddingTop="27dp" android:paddingLeft="15dp">
+    		<ImageView android:layout_height="wrap_content" android:id="@+id/imageView1" android:src="@drawable/icon_widget" android:adjustViewBounds="true" android:layout_width="fill_parent" android:minHeight="48dp" android:minWidth="48dp"></ImageView>
     	</LinearLayout>
     
-    	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout1" android:layout_width="wrap_content" android:layout_weight="0.6" android:orientation="vertical" android:paddingTop="23dp" android:paddingLeft="10dp">
-        	<TextView android:layout_height="wrap_content" android:text="Dalsi udalost" android:id="@+id/tvNextEvent" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:layout_width="wrap_content"></TextView>
-        	<TextView android:layout_height="wrap_content" android:text="Dalsi zmena" android:id="@+id/tvNextChange" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:layout_width="wrap_content"></TextView>
+    	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout1" android:orientation="vertical" android:paddingTop="20dp" android:paddingLeft="10dp" android:layout_width="185dp" android:weightSum="1">
+    		<LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout3" android:layout_width="wrap_content" >
+    			<TextView android:layout_height="wrap_content" android:text="Event: " android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:layout_width="wrap_content" android:textStyle="bold"></TextView>
+    			<TextView android:layout_height="wrap_content" android:text="event name" android:maxLength="18" android:id="@+id/tvWidgetNextEventName" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:maxWidth="150dp" android:layout_width="fill_parent"></TextView>
+    		</LinearLayout>
+    		<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/linearLayout4">
+				<TextView android:layout_height="wrap_content" android:text="Date: " android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:layout_width="wrap_content" android:textStyle="bold"></TextView>
+				<TextView android:layout_height="wrap_content" android:text="We 11.11. 18:00" android:maxLength="16" android:id="@+id/tvWidgetNextEventDate" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:maxWidth="150dp" android:layout_width="fill_parent"></TextView>
+    		</LinearLayout>
+    		<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/linearLayout5">
+    			<TextView android:layout_height="wrap_content" android:text="Alarm: " android:maxLength="15" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:layout_width="wrap_content" android:textStyle="bold"></TextView>
+    			<TextView android:layout_height="wrap_content" android:text="18:00" android:maxLength="5" android:id="@+id/tvWidgetAlarmTime" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:maxWidth="150dp" android:layout_width="wrap_content"></TextView>
+    			<TextView android:layout_height="wrap_content" android:text="Sleep mode" android:maxLength="10" android:id="@+id/tvWidgetMode" android:textAppearance="?android:attr/textAppearanceSmall" android:textColor="@android:color/black" android:layout_width="wrap_content" android:textStyle="bold" android:paddingLeft="5dp" android:gravity="center"></TextView>
+    		</LinearLayout>
+    		
     	</LinearLayout>
-    	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout2" android:layout_width="wrap_content" android:layout_weight="0.2" android:paddingTop="27dp" android:paddingRight="15dp">
-    		<ImageButton android:layout_height="wrap_content" android:id="@+id/switchButton" android:layout_width="wrap_content" android:src="@drawable/button_quit"></ImageButton>
+    	<LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout2" android:layout_width="55dp" android:baselineAligned="false">
+    		<ImageButton android:layout_gravity="center" android:layout_height="wrap_content" android:src="@drawable/button_quit" android:minWidth="48dp" android:layout_width="wrap_content" android:id="@+id/switchButton" android:minHeight="48dp"></ImageButton>
     	</LinearLayout>
 
 </LinearLayout>

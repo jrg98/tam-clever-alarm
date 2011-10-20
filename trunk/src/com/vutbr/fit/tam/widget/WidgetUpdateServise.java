@@ -5,6 +5,7 @@ import java.util.Date;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
@@ -21,21 +22,41 @@ public class WidgetUpdateServise extends Service {
 	@Override
 	public void onStart(Intent intent, int startId) {
 
+				
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
 
 		int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		
+		Event nextEvent = this.getNextEvent();
 		
-		String nextEvent = queryNextEvent();
 		
+		// Actualize all showed widget
 		if (appWidgetIds.length > 0) {
 			for (int widgetId : appWidgetIds) {
 
 				RemoteViews remoteViews = new RemoteViews(getPackageName(),R.layout.widget);
-				remoteViews.setTextViewText(R.id.tvNextEvent, nextEvent);
-
-				changeSwitchButton(remoteViews);
 				
+				// Set info about next event
+				if (nextEvent != null) {
+					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, nextEvent.getTitle());
+					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, nextEvent.getBeginDate().toLocaleString());
+				}
+				
+				// Set info about alarm
+				
+				
+				// Set info about sleep mode
+				Boolean sleepMode = true; // only for try
+				
+				if (sleepMode) {
+					remoteViews.setTextViewText(R.id.tvWidgetMode, this.getResources().getText(R.string.sleep_mode));
+				}
+				else {
+					remoteViews.setTextViewText(R.id.tvWidgetMode, "");
+				}
+				
+				remoteViews.setImageViewBitmap(R.id.switchButton, this.getButtonImage(sleepMode));
+								
 				appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
 			}
@@ -53,37 +74,40 @@ public class WidgetUpdateServise extends Service {
 	
 	
 	// Only for try, change icon at widget
-	public void changeSwitchButton(RemoteViews remoteViews) {
-		Bitmap theImage = BitmapFactory.decodeResource(getResources() , R.drawable.button_start);
-    	theImage = Bitmap.createBitmap(theImage);
-    	remoteViews.setImageViewBitmap(R.id.switchButton, theImage);
+	public Bitmap getButtonImage (boolean sleepMode) {
+		
+		Bitmap theImage = BitmapFactory.decodeResource(getResources() ,
+								sleepMode ? R.drawable.button_start : R.drawable.button_quit);
+		
+		return Bitmap.createBitmap(theImage);
+
 	}
 	
 	// Get next event
-	private String queryNextEvent() {
+	private Event getNextEvent() {
 		
 		EventsDatabase database = new EventsDatabase(this);
-    	
-		String nextEvent = null;
-		
+    			
     	Date from = new Date();
     	from.setTime(from.getTime() - DateUtils.DAY_IN_MILLIS);
     	Date to = new Date();
     	to.setTime(to.getTime() + DateUtils.DAY_IN_MILLIS);
-    	
+    	    	
 		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_AVAILABLE)) {
 
+			return event;
+			
+			/*
 			String title = event.getTitle();
 			Date begin = event.getBeginDate();
 			Date end = event.getEndDate();
 
 			nextEvent = "Title: " + title + " Begin: " + begin + "\nEnd: " + end + "\n";
-			
-			return nextEvent;
-			
+			*/
+						
 		}
 		
-		return nextEvent;
+		return null;
 		
 	}
 

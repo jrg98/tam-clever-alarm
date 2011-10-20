@@ -50,9 +50,9 @@ public class CalendarDatabase {
 	private String getCalendarURI() {
 		
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
-			return CalendarDatabase.CALENDAR_CONTENT_URI_ECLAIR;
+			return this.CALENDAR_CONTENT_URI_FROYO;
 		} else{
-			return CalendarDatabase.CALENDAR_CONTENT_URI_FROYO;
+			return this.CALENDAR_CONTENT_URI_ECLAIR;
 		}
 	}
 	

@@ -28,9 +28,9 @@ public class ChangeObserver extends ContentObserver {
 
 	public static String getCalendarURI() {
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
-			return ChangeObserver.CALENDAR_INSTANCES_URI_ECLAIR;
-		} else{
 			return ChangeObserver.CALENDAR_INSTANCES_URI_FROYO;
+		} else{
+			return ChangeObserver.CALENDAR_INSTANCES_URI_ECLAIR;
 		}
 	}
 	

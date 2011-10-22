@@ -42,6 +42,33 @@ public class EventsDatabase {
 		}
 	}
 	
+	/**
+	 * Finds the first event from date "from" in 24 hours interval
+	 * @param from
+	 * @param status database status
+	 * @return first event, or null if no events are scheduled
+	 */
+	public Event getFirstEvent(Date from, int status) {
+		Event e = new Event();
+		// treshhold
+		Date to = new Date(from.getTime()+24*60*60*1000);
+		e.setBeginDate(to);
+		for (Event event : getEvents(from, to, status)) {
+			if (event.getBeginDate().compareTo(e.getBeginDate()) <= 0) {
+				e.setAllDayEvent(event.isAllDayEvent());
+				e.setBusy(event.isBusy());
+				e.setBeginDate(event.getBeginDate());
+				e.setColor(event.getColor());
+				e.setEndDate(event.getEndDate());
+				e.setTitle(event.getTitle());
+			}
+		}
+		
+		if (e.getBeginDate().compareTo(to) == 0) return null;
+		
+		return e;
+	}
+	
 	public Set<Event> getEvents(Date from, Date to, int status) {
   		Set<Calendar> calendars = new CalendarDatabase(this.context).loadCalendars();
   		Set<Event> events = new HashSet<Event>();

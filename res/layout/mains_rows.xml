@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#00EAFF"
+    android:id="@+id/dayBackground"
+    >
+     
+    <TextView
+		android:id="@+id/dayRowTitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+	   	android:layout_gravity="center_vertical"
+	   	android:width="52dp"
+	   	android:height="52dp"
+		android:gravity="center"
+		android:text="WE"
+		android:textSize="24px"
+	    android:textStyle="bold"
+	    android:textColor="@android:color/black"
+		/>
+ 
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	   	android:layout_gravity="center_horizontal"
+	   	android:paddingLeft="10px"
+	    android:layout_weight="1"
+		android:paddingTop="7px"
+		android:paddingRight="10px"
+	    >
+ 
+ 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    	android:orientation="horizontal"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	   		android:layout_gravity="center_horizontal"
+	    	android:textSize="20px"
+	    	android:background="#F5F5F1"
+	    >
+ 			<TextView
+ 				android:layout_width="wrap_content"
+	         	android:layout_height="fill_parent"
+	         	android:text=" Alarm: "
+	         	android:textStyle="bold"
+	         	android:textColor="#B6B6B6"
+	         />
+
+	    	<TextView android:id="@+id/dayRowAlarm"
+	         	android:layout_width="fill_parent"
+	         	android:layout_height="fill_parent"
+	         	android:text="22:22"
+	         	android:textColor="#B6B6B6"
+	         />
+	         
+
+	         
+	         </LinearLayout>
+ 
+ 			 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    		android:orientation="horizontal"
+	    		android:layout_width="fill_parent"
+	    		android:layout_height="wrap_content"
+	   			android:layout_gravity="center_horizontal"
+	    		android:textSize="20px"
+	    		android:background="#B6B6B6"
+	    	>
+	    	
+ 				<TextView	
+ 					android:layout_width="wrap_content"
+	         		android:layout_height="fill_parent"
+	         		android:text=" Sleep mode: "
+	         		android:textStyle="bold"
+	         		android:textColor="#F5F5F1"
+	       		  />
+ 
+ 
+	    		<TextView android:id="@+id/dayRowSleepmode"
+	             	android:layout_width="fill_parent"
+	        	 	android:layout_height="fill_parent"
+	        	    android:text="23:55"
+	        	    android:textColor="#F5F5F1"
+	       		  />
+	         
+	         
+ 		</LinearLayout>
+    </LinearLayout>
+    
+	<TextView
+		 android:visibility="invisible"
+		 android:id="@+id/dayRowToday"
+		 android:text="false"
+		 android:textAppearance="?android:attr/textAppearanceSmall"
+		 android:layout_width="0dp"
+		 android:layout_height="0dp"
+	/>
+
+
+</LinearLayout>

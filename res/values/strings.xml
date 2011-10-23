@@ -16,4 +16,30 @@
     
     <string name="sleep_mode">Sleep mode</string>
     
+    <string name="shortday_MO">MO</string>
+    <string name="shortday_TU">TU</string>
+    <string name="shortday_WE">WE</string>
+    <string name="shortday_TH">TH</string>
+    <string name="shortday_FR">FR</string>
+    <string name="shortday_SA">SA</string>
+    <string name="shortday_SU">SU</string>
+    
+    <string name="day_MO">Monday</string>
+    <string name="day_TU">Tuesday</string>
+    <string name="day_WE">Wednesday</string>
+    <string name="day_TH">Thursday</string>
+    <string name="day_FR">Friday</string>
+    <string name="day_SA">Saturday</string>
+    <string name="day_SU">Sunday</string>
+    
+    <string name="state">State</string>
+    <string name="time">Time</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    
+    <string name="event">Event</string>
+    <string name="date">Date</string>
+    <string name="alarm">Alarm</string>
+
+    
 </resources>

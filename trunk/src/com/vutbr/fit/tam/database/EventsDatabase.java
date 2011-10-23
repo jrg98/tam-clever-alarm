@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 
 import com.vutbr.fit.tam.calendar.Calendar;
 import com.vutbr.fit.tam.calendar.Event;
@@ -51,10 +52,19 @@ public class EventsDatabase {
 	public Event getFirstEvent(Date from, int status) {
 		Event e = new Event();
 		// treshhold
-		Date to = new Date(from.getTime()+24*60*60*1000);
+		//Date to = new Date(from.getTime()+24*60*60*1000);
+		Date to = new Date(from.getTime()+86400000);
+		
 		e.setBeginDate(to);
+
 		for (Event event : getEvents(from, to, status)) {
+			
+			Log.v("LOOG", event.getTitle());
+			
 			if (event.getBeginDate().compareTo(e.getBeginDate()) <= 0) {
+				
+				Log.v("LOOG", event.getTitle());
+				
 				e.setAllDayEvent(event.isAllDayEvent());
 				e.setBusy(event.isBusy());
 				e.setBeginDate(event.getBeginDate());

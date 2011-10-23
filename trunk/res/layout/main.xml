@@ -4,40 +4,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-	<ScrollView 
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
-		<LinearLayout
-    		android:orientation="vertical"
-    		android:layout_width="fill_parent"
-    		android:layout_height="fill_parent"
-    	>
-			<Button
-				android:id="@+id/queryButton"
-			    android:layout_width="fill_parent" 
-			    android:layout_height="wrap_content" 
-			    android:text="Load events"
-			/>
-			
-			<Button android:text="Alarm"
-			 	android:id="@+id/alarmButton"
-			 	android:layout_height="wrap_content"
-			    android:layout_width="fill_parent"
-			/>
-			 
-			<Button android:text="Ringing"
-			 	android:id="@+id/ringingButton"
-			 	android:layout_height="wrap_content"
-			    android:layout_width="fill_parent"
-			/>  
-			
-			  	
-			<TextView  
-				android:id="@+id/textView"
-			    android:layout_width="fill_parent" 
-			    android:layout_height="wrap_content" 
-			   />
-			
-		</LinearLayout>			    
-	</ScrollView>    
+ 
+    <ListView
+        android:id="@+id/mainDaysListView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+      />
+ 
 </LinearLayout>

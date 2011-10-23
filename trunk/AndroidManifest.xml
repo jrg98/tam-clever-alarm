@@ -24,17 +24,12 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".activity.CleverAlarm">
-        	<intent-filter>
-        		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
-        	</intent-filter>
-        
-        </activity>
-        
         <activity android:name=".activity.Settings" />
         <activity android:name=".activity.CalendarsSettings" />
         <activity android:name=".activity.Alarm" />
-        <activity android:name=".activity.Ringing" />
+        <activity android:name=".activity.DayInfoTab" />
+        <activity android:name=".activity.Sleepmode" />
+        <activity android:name=".activity.Day" />  
         
         <service android:name=".widget.WidgetUpdateServise"></service>
         

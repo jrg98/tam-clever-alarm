@@ -4,4 +4,3 @@
             android:initialLayout="@layout/widget"
             >
 </appwidget-provider>
-<!-- android:configure="com.vutbr.fit.tam.activity.CleverAlarm" -->

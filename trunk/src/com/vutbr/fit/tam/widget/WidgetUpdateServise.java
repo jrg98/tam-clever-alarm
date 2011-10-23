@@ -5,7 +5,6 @@ import java.util.Date;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
@@ -30,6 +29,7 @@ public class WidgetUpdateServise extends Service {
 		Event nextEvent = this.getNextEvent();
 		
 		
+		
 		// Actualize all showed widget
 		if (appWidgetIds.length > 0) {
 			for (int widgetId : appWidgetIds) {
@@ -40,6 +40,10 @@ public class WidgetUpdateServise extends Service {
 				if (nextEvent != null) {
 					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, nextEvent.getTitle());
 					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, nextEvent.getBeginDate().toLocaleString());
+				}
+				else {
+					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, "");
+					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, "");
 				}
 				
 				// Set info about alarm

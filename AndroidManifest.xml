@@ -33,13 +33,13 @@
         
         <service android:name=".widget.WidgetUpdateServise"></service>
         
-        <receiver android:name=".AlarmBootReceiver">
+        <receiver android:name="alarm..AlarmBootReceiver">
       		<intent-filter>
         		<action android:name="android.intent.action.BOOT_COMPLETED" />
       		</intent-filter>
     	</receiver>
-    	<receiver android:name=".AlarmLauncher"></receiver>
-    	<service android:name=".AlarmUpdater"></service>
+    	<receiver android:name=".alarm.AlarmLauncher"></receiver>
+    	<receiver android:name="calendar.CalendarChecker"></receiver>
 
     </application>
     

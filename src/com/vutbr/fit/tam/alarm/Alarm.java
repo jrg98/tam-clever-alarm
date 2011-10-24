@@ -7,6 +7,9 @@ package com.vutbr.fit.tam.alarm;
  */
 public class Alarm {
 
+	// HARD CODED constant id for saving actual alarm time
+	public static int ACTUAL_ALARM_ID = 16254;
+	
 	private int id;
 	
 	private boolean enabled;

@@ -18,6 +18,9 @@ public class AlarmAdapter {
 	private Context context;
 	private SQLiteDatabase database;
 	private AlarmHelper helper;
+	
+	private final int INSERT = 0;
+	private final int UPDATE = 1;
 
 	/**
 	 * Constructor
@@ -46,16 +49,18 @@ public class AlarmAdapter {
 	}
 
 	/**
+	 * Insert alarm for a specified day
+	 */
+	public long updateAlarm(Alarm alarm) {
+		ContentValues initialValues = this.createContentValues(alarm, this.INSERT);
+		return this.database.insert(AlarmHelper.DATABASE_TABLE,	null, initialValues);
+	}
+	
+	/**
 	 * Update alarm for a specified day
 	 */
-	public boolean updateAlarm(Alarm alarm) {
-		ContentValues updateValues = 
-			this.createContentValues(
-				alarm.isEnabled(),
-				alarm.getWakeUpOffset(),
-				alarm.getWakeUpTimeout(),
-				alarm.getSleepTime()
-			);
+	public boolean insertAlarm(Alarm alarm) {
+		ContentValues updateValues = this.createContentValues(alarm, this.UPDATE);
 
 		return this.database.update(
 					AlarmHelper.DATABASE_TABLE, 
@@ -63,7 +68,7 @@ public class AlarmAdapter {
 					AlarmHelper.KEY_ALARM_ID + "=" + alarm.getId(),
 					null
 				) > 0;
-	}
+	}	
 
 	public Cursor fetchAllAlarms() {
 		return this.database.query(
@@ -109,13 +114,18 @@ public class AlarmAdapter {
 		}
 		return mCursor;
 	}
-
-	private ContentValues createContentValues(boolean enabled, int wakeUpOffset, int wakeUpTimeout, int sleepTime) {
+	
+	private ContentValues createContentValues(Alarm alarm, int type) {
 		ContentValues values = new ContentValues();
-		values.put(AlarmHelper.KEY_ENABLED, enabled);
-		values.put(AlarmHelper.KEY_WAKEUP_OFFSET, wakeUpOffset);
-		values.put(AlarmHelper.KEY_WAKEUP_TIMEOUT, wakeUpTimeout);
-		values.put(AlarmHelper.KEY_SLEEP_TIME, sleepTime);
+		
+		if (type == this.INSERT) {
+			values.put(AlarmHelper.KEY_ALARM_ID, alarm.getId());
+		}
+		
+		values.put(AlarmHelper.KEY_ENABLED, alarm.isEnabled());
+		values.put(AlarmHelper.KEY_WAKEUP_OFFSET, alarm.getWakeUpOffset());
+		values.put(AlarmHelper.KEY_WAKEUP_TIMEOUT, alarm.getWakeUpTimeout());
+		values.put(AlarmHelper.KEY_SLEEP_TIME, alarm.getSleepTime());
 		return values;
-	}
+	}	
 }

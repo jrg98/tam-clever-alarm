@@ -56,8 +56,8 @@ public class AlarmHelper extends SQLiteOpenHelper {
 		"create table " + DATABASE_TABLE + " (" +
 		"	" + KEY_ALARM_ID + " int not null primary key, " +
 		"	" + KEY_ENABLED + " bool not null, " +
-		"	" + KEY_WAKEUP_OFFSET + " int not null" +
-		"	" + KEY_WAKEUP_TIMEOUT + " int not null" +
+		"	" + KEY_WAKEUP_OFFSET + " int not null," +
+		"	" + KEY_WAKEUP_TIMEOUT + " int not null," +
 		"	" + KEY_SLEEP_TIME + " int not null" +
 		");";
 

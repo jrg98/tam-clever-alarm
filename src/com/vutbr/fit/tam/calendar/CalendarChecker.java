@@ -65,8 +65,10 @@ public class CalendarChecker extends BroadcastReceiver {
 				if (updateNecessary(actAlarm, e, alarm) && alarm.isEnabled()) updateExistingAlarm(aD, alarm, e, c);
 			} else if (alarm.isEnabled()){
 				// ak ziaden alarm ulozeny nemame, a ma sa spustit, tak ho pridame
-				addNewAlarm(aD, alarm, e);
-			} 
+				addNewAlarm(aD, alarm, e, c);
+			} else {
+				cancelAlarm(c);
+			}
 			// !!!!!!!!!! bacha pri boote treba vzdy nastavit alarm !!!!!!!!!!!!!!!!!!!!!!
 			
 			aD.close();
@@ -85,15 +87,18 @@ public class CalendarChecker extends BroadcastReceiver {
 		toDay = new Date(cTime-cDate.getHours()*(60*60*1000)-cDate.getMinutes()*(60*1000));
 	}
 	
+	// updatene alarm v databazi a zaroven nastavi dany alarm na spustenie
 	public void updateExistingAlarm(AlarmAdapter aD, Alarm alarm, Event e, Context c) {
 		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, (int)(e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000));
 		aD.updateAlarm(a);
-		setAlarmTime(a.getSleepTime(), c);
+		if (a.getSleepTime() > cTime) setAlarmTime(a.getSleepTime(), c);
 	}
 	
-	public void addNewAlarm(AlarmAdapter aD, Alarm alarm, Event e) {
+	public void addNewAlarm(AlarmAdapter aD, Alarm alarm, Event e, Context c) {
 		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, (int)(e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000));
 		aD.insertAlarm(a);
+		if (a.getSleepTime() > cTime) setAlarmTime(a.getSleepTime(), c);
+
 	}
 	
 	public boolean updateNecessary(long act, Event e, Alarm alarm) {
@@ -107,6 +112,13 @@ public class CalendarChecker extends BroadcastReceiver {
 	    PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
 	    
 	    mgr.set(AlarmManager.RTC_WAKEUP, millis, pi);
+	}
+	
+	private void cancelAlarm(Context c) {
+		AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+		Intent i=new Intent(c, AlarmLauncher.class);
+	    PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
+	    mgr.cancel(pi);
 	}
 	
 	// Sets variable lastDay to Sunday of the current week, at 23:59:XX

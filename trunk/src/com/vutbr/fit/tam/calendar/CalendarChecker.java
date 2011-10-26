@@ -45,6 +45,7 @@ public class CalendarChecker extends BroadcastReceiver {
 		long actAlarm;
 		AlarmAdapter aD;
 		Alarm alarm;
+		long updateAlarm;
 		
 		try {
 			aD = new AlarmAdapter(c).open();
@@ -59,14 +60,18 @@ public class CalendarChecker extends BroadcastReceiver {
 				aD.close();
 				return;
 			}
-			 
+			
+			updateAlarm = e.getBeginDate().getTime()-alarm.getWakeUpOffset();
+			if (updateAlarm > alarm.getWakeUpTimeout()) updateAlarm = alarm.getWakeUpTimeout();
+			
 			if (cursorACT.moveToFirst()) {
 				// ak mame nejaky zaznam alarmu, tak zistime ci je potrebne alarm updatovat
 				actAlarm = cursorACT.getLong(AlarmColumnIndex);
-				if (updateNecessary(actAlarm, e, alarm) && alarm.isEnabled()) updateExistingAlarm(aD, alarm, e, c);
+				
+				if (actAlarm != updateAlarm && alarm.isEnabled()) updateExistingAlarm(aD, updateAlarm, c);
 			} else if (alarm.isEnabled()){
 				// ak ziaden alarm ulozeny nemame, a ma sa spustit, tak ho pridame
-				addNewAlarm(aD, alarm, e, c);
+				addNewAlarm(aD, updateAlarm, c);
 			} else {
 				cancelAlarm(c);
 			}
@@ -90,23 +95,19 @@ public class CalendarChecker extends BroadcastReceiver {
 	}
 	
 	// updatene alarm v databazi a zaroven nastavi dany alarm na spustenie
-	public void updateExistingAlarm(AlarmAdapter aD, Alarm alarm, Event e, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000);
+	public void updateExistingAlarm(AlarmAdapter aD, long atime, Context c) {
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, atime);
 		aD.updateAlarm(a);
 		if (a.getSleepTime() > cTime) setAlarmTime(a.getSleepTime(), c);
 	}
 	
-	public void addNewAlarm(AlarmAdapter aD, Alarm alarm, Event e, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000);
+	public void addNewAlarm(AlarmAdapter aD, long atime, Context c) {
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, atime);
 		aD.insertAlarm(a);
 		if (a.getSleepTime() > cTime) setAlarmTime(a.getSleepTime(), c);
 
 	}
 	
-	public boolean updateNecessary(long act, Event e, Alarm alarm) {
-		if (act != e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000) return true;
-		else return false;
-	}
 	
 	private void setAlarmTime(long millis, Context c) {
 		AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);

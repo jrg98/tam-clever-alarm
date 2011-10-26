@@ -17,7 +17,7 @@ public class AlarmAdapter {
 
 	private Context context;
 	private SQLiteDatabase database;
-	private AlarmHelper helper;
+	private DatabaseHelper helper;
 	
 	private final int INSERT = 0;
 	private final int UPDATE = 1;
@@ -36,7 +36,7 @@ public class AlarmAdapter {
 	 * @throws SQLException
 	 */
 	public AlarmAdapter open() throws SQLException {
-		this.helper = new AlarmHelper(this.context);
+		this.helper = new DatabaseHelper(this.context);
 		this.database = this.helper.getWritableDatabase();
 		return this;
 	}
@@ -51,7 +51,7 @@ public class AlarmAdapter {
 	/**
 	 * Insert alarm for a specified day
 	 */
-	public long updateAlarm(Alarm alarm) {
+	public long insertAlarm(Alarm alarm) {
 		ContentValues initialValues = this.createContentValues(alarm, this.INSERT);
 		return this.database.insert(AlarmHelper.DATABASE_TABLE,	null, initialValues);
 	}
@@ -59,7 +59,7 @@ public class AlarmAdapter {
 	/**
 	 * Update alarm for a specified day
 	 */
-	public boolean insertAlarm(Alarm alarm) {
+	public boolean updateAlarm(Alarm alarm) {
 		ContentValues updateValues = this.createContentValues(alarm, this.UPDATE);
 
 		return this.database.update(
@@ -109,9 +109,7 @@ public class AlarmAdapter {
 				null, 
 				null
 			);
-		if (mCursor != null) {
-			mCursor.moveToFirst();
-		}
+		
 		return mCursor;
 	}
 	

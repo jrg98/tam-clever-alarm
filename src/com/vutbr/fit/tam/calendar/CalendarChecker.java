@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
+import android.widget.Toast;
 
 public class CalendarChecker extends BroadcastReceiver {
 
@@ -50,7 +51,7 @@ public class CalendarChecker extends BroadcastReceiver {
 			Cursor cursorACT = aD.fetchAlarm(Alarm.ACTUAL_ALARM_ID);
 			Cursor cursorDAY = aD.fetchAlarm(dayID);
 			
-			if (cursorDAY != null) {
+			if (cursorDAY.moveToFirst()) {
 				alarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getInt(1), cursorDAY.getInt(2), cursorDAY.getInt(3));
 			} else {
 				// ak nie je ziadny obsah v tabulke pre dany den, nic sa nedeje
@@ -59,7 +60,7 @@ public class CalendarChecker extends BroadcastReceiver {
 				return;
 			}
 			 
-			if (cursorACT != null) {
+			if (cursorACT.moveToFirst()) {
 				// ak mame nejaky zaznam alarmu, tak zistime ci je potrebne alarm updatovat
 				actAlarm = cursorACT.getLong(AlarmColumnIndex);
 				if (updateNecessary(actAlarm, e, alarm) && alarm.isEnabled()) updateExistingAlarm(aD, alarm, e, c);
@@ -73,9 +74,10 @@ public class CalendarChecker extends BroadcastReceiver {
 			
 			aD.close();
 			
-		} catch (SQLException ex) {
+		} catch (Exception ex) {
 			// mozna hlaska o zlyhani nacitania DB
 			Log.e("CalendarChecker", "AlarmAdapter error: "+ex.toString());
+			Toast.makeText(c, ex.toString(), Toast.LENGTH_LONG);
 			return;
 		}
 		
@@ -89,13 +91,13 @@ public class CalendarChecker extends BroadcastReceiver {
 	
 	// updatene alarm v databazi a zaroven nastavi dany alarm na spustenie
 	public void updateExistingAlarm(AlarmAdapter aD, Alarm alarm, Event e, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, (int)(e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000));
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000);
 		aD.updateAlarm(a);
 		if (a.getSleepTime() > cTime) setAlarmTime(a.getSleepTime(), c);
 	}
 	
 	public void addNewAlarm(AlarmAdapter aD, Alarm alarm, Event e, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, (int)(e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000));
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, e.getBeginDate().getTime()-alarm.getWakeUpOffset()*60*1000);
 		aD.insertAlarm(a);
 		if (a.getSleepTime() > cTime) setAlarmTime(a.getSleepTime(), c);
 

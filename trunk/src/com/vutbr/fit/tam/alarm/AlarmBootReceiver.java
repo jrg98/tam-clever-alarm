@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class AlarmBootReceiver extends BroadcastReceiver {
 	
-	private static final int PERIOD=300000;
+	private static final int PERIOD=60000;
 	private static final int DEFAULT_PERIOD=-1;
 	
 
@@ -52,22 +52,21 @@ public class AlarmBootReceiver extends BroadcastReceiver {
 			aD = new AlarmAdapter(c).open();
 			Cursor cursorACT = aD.fetchAlarm(Alarm.ACTUAL_ALARM_ID);
 			 
-			if (cursorACT != null) {
-				// ak mame nejaky zaznam alarmu, tak zistime ci je potrebne alarm updatovat
-				actAlarm = cursorACT.getLong(3);
+				if (cursorACT.moveToFirst()) {
+					// ak mame nejaky zaznam alarmu, tak zistime ci je potrebne alarm updatovat
+					actAlarm = cursorACT.getLong(3);
 				
-				// nastavi alarm iba ak este nenastal ked bol device vypnuty, inak by ho odpalilo hned
-				if (actAlarm > System.currentTimeMillis()) {
-					AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
-					Intent i=new Intent(c, AlarmLauncher.class);
-					PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
+					// nastavi alarm iba ak este nenastal ked bol device vypnuty, inak by ho odpalilo hned
+					if (actAlarm > System.currentTimeMillis()) {
+						AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+						Intent i=new Intent(c, AlarmLauncher.class);
+						PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
 			    
-					mgr.set(AlarmManager.RTC_WAKEUP,
-		                actAlarm,
-		                pi);
+						mgr.set(AlarmManager.RTC_WAKEUP,
+								actAlarm,
+								pi);
+					}
 				}
-				
-			} 
 			
 			aD.close();
 			

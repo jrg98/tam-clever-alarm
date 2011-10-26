@@ -15,7 +15,7 @@ import android.util.Log;
  * @author Zsolt Horváth
  *
  */
-public class CalendarHelper extends SQLiteOpenHelper {
+public class CalendarHelper {
 
 	/**
 	 * Database table name
@@ -32,45 +32,12 @@ public class CalendarHelper extends SQLiteOpenHelper {
 	/**
 	 * Database definition
 	 */
-	private final String DATABASE_CREATE = 
+	protected static final String DATABASE_CREATE = 
 		"create table " + DATABASE_TABLE + " (" +
 		"	" + KEY_CALENDAR_ID + " int not null primary key, " +
 		"	" + KEY_TITLE + " text not null, " +
 		"	" + KEY_ENABLED + " bool not null" +
 		");";
 
-	
-	/**
-	 * Constructor
-	 * @param context
-	 */
-	public CalendarHelper(Context context) {
-		super(context, Database.NAME, null, Database.VERSION);
-	}
-	
-	/**
-	 * Method is called during creation of the database
-	 * @param database
-	 */
-	public void onCreate(SQLiteDatabase database) {
-		database.execSQL(DATABASE_CREATE);
-	}
-
-	/**
-	 * Method is called during an upgrade of the database, e.g. if you increase
-	 * the database version
-	 * @param database
-	 * @param oldVersion
-	 * @param newVersion
-	 */
-	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-		Log.w(
-			CalendarHelper.class.getName(),
-			"Upgrading database from version " + oldVersion + " to " +
-			newVersion + ", which will destroy all old data"
-		);
-		database.execSQL("DROP TABLE IF EXISTS " + CalendarHelper.DATABASE_TABLE);
-		this.onCreate(database);
-	}
 
 }

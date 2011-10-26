@@ -23,10 +23,12 @@ import android.widget.ListView;
 import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.calendar.ChangeObserver;
 import com.vutbr.fit.tam.calendar.Event;
+import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
 import com.vutbr.fit.tam.gui.DaySimpleAdapter;
 import com.vutbr.fit.tam.gui.Days;
 import com.vutbr.fit.tam.nofitication.NotificationHelper;
+import com.vutbr.fit.tam.alarm.Alarm;
 
 
 
@@ -92,8 +94,6 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
   
 
       this.createList();
-        
-        
  
        
         /*
@@ -277,7 +277,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
     	this.finish();
     }
 
-	@Override
+	//@Override
 	public void onItemClick(AdapterView<?> a, View v, int position, long id) {
 
 		Intent intent = new Intent(this, DayInfoTab.class);

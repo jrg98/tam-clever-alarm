@@ -18,7 +18,7 @@ public class CalendarAdapter {
 
 	private Context context;
 	private SQLiteDatabase database;
-	private CalendarHelper helper;
+	private DatabaseHelper helper;
 
 	/**
 	 * Constructor
@@ -34,7 +34,7 @@ public class CalendarAdapter {
 	 * @throws SQLException
 	 */
 	public CalendarAdapter open() throws SQLException {
-		this.helper = new CalendarHelper(this.context);
+		this.helper = new DatabaseHelper(this.context);
 		this.database = this.helper.getWritableDatabase();
 		return this;
 	}

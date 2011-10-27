@@ -53,8 +53,8 @@ public class CalendarAdapter {
 
 	public long insertCalendar(Calendar c) {
 		ContentValues initialValues = this.createContentValues(Integer.parseInt(c.getId()), c.getTitle(),c.isEnabled());
-		//return this.database.insertWithOnConflict(CalendarHelper.DATABASE_TABLE, null, initialValues, SQLiteDatabase.CONFLICT_REPLACE);
-		return this.database.insert(CalendarHelper.DATABASE_TABLE, null, initialValues);
+		//return this.database.insertWithOnConflict(CalendarTable.DATABASE_TABLE, null, initialValues, SQLiteDatabase.CONFLICT_REPLACE);
+		return this.database.insert(CalendarTable.NAME, null, initialValues);
 	}
 
 	/**
@@ -63,9 +63,9 @@ public class CalendarAdapter {
 	public boolean updateCalendar(int id, String title, boolean enabled) {
 		ContentValues updateValues = this.createContentValues(id, title, enabled);
 		return this.database.update(
-				CalendarHelper.DATABASE_TABLE, 
+				CalendarTable.NAME, 
 				updateValues, 
-				CalendarHelper.KEY_CALENDAR_ID+ "=" + id,
+				CalendarTable.KEY_CALENDAR_ID+ "=" + id,
 				null
 			) > 0;
 	}
@@ -74,14 +74,14 @@ public class CalendarAdapter {
 	 * Delete calendar
 	 */
 	public boolean deleteCalendar(long rowId) {
-		return this.database.delete(CalendarHelper.DATABASE_TABLE, CalendarHelper.KEY_CALENDAR_ID + "=" + rowId, null) > 0;
+		return this.database.delete(CalendarTable.NAME, CalendarTable.KEY_CALENDAR_ID + "=" + rowId, null) > 0;
 	}
 	
 	/**
 	 * Delete all calendars
 	 */
 	public boolean deleteCalendars() {
-		return this.database.delete(CalendarHelper.DATABASE_TABLE, null, null) > 0;
+		return this.database.delete(CalendarTable.NAME, null, null) > 0;
 	}	
 
 	/**
@@ -91,8 +91,8 @@ public class CalendarAdapter {
 	 */
 
 	public Cursor fetchAllCalendars() {
-		return this.database.query(CalendarHelper.DATABASE_TABLE, new String[] {
-				CalendarHelper.KEY_CALENDAR_ID, CalendarHelper.KEY_TITLE, CalendarHelper.KEY_ENABLED}, null, null, null,
+		return this.database.query(CalendarTable.NAME, new String[] {
+				CalendarTable.KEY_CALENDAR_ID, CalendarTable.KEY_TITLE, CalendarTable.KEY_ENABLED}, null, null, null,
 				null, null);
 	}
 
@@ -100,9 +100,9 @@ public class CalendarAdapter {
 	 * Return a Cursor positioned at the defined calendar
 	 */
 	public Cursor fetchCalendars(int id) throws SQLException {
-		Cursor mCursor = this.database.query(true, CalendarHelper.DATABASE_TABLE, new String[] {
-				CalendarHelper.KEY_CALENDAR_ID, CalendarHelper.KEY_TITLE, CalendarHelper.KEY_ENABLED },
-				CalendarHelper.KEY_CALENDAR_ID + "=" + id, null, null, null, null, null);
+		Cursor mCursor = this.database.query(true, CalendarTable.NAME, new String[] {
+				CalendarTable.KEY_CALENDAR_ID, CalendarTable.KEY_TITLE, CalendarTable.KEY_ENABLED },
+				CalendarTable.KEY_CALENDAR_ID + "=" + id, null, null, null, null, null);
 		if (mCursor != null) {
 			mCursor.moveToFirst();
 		}
@@ -111,9 +111,9 @@ public class CalendarAdapter {
 
 	private ContentValues createContentValues(int id, String title, boolean enabled) {
 		ContentValues values = new ContentValues();
-		values.put(CalendarHelper.KEY_CALENDAR_ID, id);
-		values.put(CalendarHelper.KEY_TITLE, title);
-		values.put(CalendarHelper.KEY_ENABLED, enabled);
+		values.put(CalendarTable.KEY_CALENDAR_ID, id);
+		values.put(CalendarTable.KEY_TITLE, title);
+		values.put(CalendarTable.KEY_ENABLED, enabled);
 		return values;
 	}
 }

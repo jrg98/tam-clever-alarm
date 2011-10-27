@@ -32,8 +32,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	 * @param database
 	 */
 	public void onCreate(SQLiteDatabase database) {
-		database.execSQL(CalendarHelper.DATABASE_CREATE);
-		database.execSQL(AlarmHelper.DATABASE_CREATE);
+		database.execSQL(CalendarTable.NAME);
+		database.execSQL(AlarmTable.NAME);
 	}
 
 	/**
@@ -49,8 +49,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			"Upgrading database from version " + oldVersion + " to " +
 			newVersion + ", which will destroy all old data"
 		);
-		database.execSQL("DROP TABLE IF EXISTS " + CalendarHelper.DATABASE_TABLE);
-		database.execSQL("DROP TABLE IF EXISTS " + AlarmHelper.DATABASE_TABLE);
+		database.execSQL("DROP TABLE IF EXISTS " + CalendarTable.NAME);
+		database.execSQL("DROP TABLE IF EXISTS " + AlarmTable.NAME);
 		this.onCreate(database);
 	}
 

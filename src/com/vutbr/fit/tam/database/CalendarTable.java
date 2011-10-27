@@ -15,25 +15,25 @@ import android.util.Log;
  * @author Zsolt Horváth
  *
  */
-public class CalendarHelper {
+public class CalendarTable {
 
 	/**
 	 * Database table name
 	 */
-	protected static final String DATABASE_TABLE = "calendar_settings";
+	protected static final String NAME = "calendar_settings";
 	
 	/**
 	 * Column names in table
 	 */
-	public static final String KEY_CALENDAR_ID = "calendar_id";
-	public static final String KEY_TITLE = "title";
-	public static final String KEY_ENABLED = "enable";	
+	protected static final String KEY_CALENDAR_ID = "calendar_id";
+	protected static final String KEY_TITLE = "title";
+	protected static final String KEY_ENABLED = "enable";	
 	
 	/**
 	 * Database definition
 	 */
 	protected static final String DATABASE_CREATE = 
-		"create table " + DATABASE_TABLE + " (" +
+		"create table " + NAME + " (" +
 		"	" + KEY_CALENDAR_ID + " int not null primary key, " +
 		"	" + KEY_TITLE + " text not null, " +
 		"	" + KEY_ENABLED + " bool not null" +

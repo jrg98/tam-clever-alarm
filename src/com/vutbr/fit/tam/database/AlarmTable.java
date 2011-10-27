@@ -15,45 +15,45 @@ import android.util.Log;
  * @author Zsolt Horváth
  *
  */
-public class AlarmHelper {
+public class AlarmTable {
 
 	/**
 	 * Database table name
 	 */
-	protected static final String DATABASE_TABLE = "alarm_settings";
+	protected static final String NAME = "alarm_settings";
 	
 	/**
 	 * Column name _id is the same as index of day in
 	 * the week, first day is Monday
 	 */
-	public static final String KEY_ALARM_ID = "_id";
+	protected static final String KEY_ALARM_ID = "_id";
 	/**
 	 * Column name enabled represents if alarm is enabled for
 	 * the day specified by _id
 	 */
-	public static final String KEY_ENABLED = "enabled";
+	protected static final String KEY_ENABLED = "enabled";
 	/**
 	 * Column wakeup_offset represent minutes as sooner the
 	 * alarms wakes you up before the first event current day
 	 */
-	public static final String KEY_WAKEUP_OFFSET = "wakeup_offset";
+	protected static final String KEY_WAKEUP_OFFSET = "wakeup_offset";
 	/**
 	 * Column wakeup_timeout represents time in minutes when alarm wakes
 	 * you up if there are no events in that day
 	 */
-	public static final String KEY_WAKEUP_TIMEOUT = "wakeup_timeout";
+	protected static final String KEY_WAKEUP_TIMEOUT = "wakeup_timeout";
 	
 	/**
 	 * Column sleep_timeout represent time in minute when you don't want
 	 * to be disturbed by ringing
 	 */
-	public static final String KEY_SLEEP_TIME = "sleep_time";
+	protected static final String KEY_SLEEP_TIME = "sleep_time";
 	
 	/**
 	 * Database definition
 	 */
-	protected static final String DATABASE_CREATE = 
-		"create table " + DATABASE_TABLE + " (" +
+	protected static final String TABLE_CREATE = 
+		"create table " + NAME + " (" +
 		"	" + KEY_ALARM_ID + " int not null primary key, " +
 		"	" + KEY_ENABLED + " bool not null, " +
 		"	" + KEY_WAKEUP_OFFSET + " unsigned big int not null," +

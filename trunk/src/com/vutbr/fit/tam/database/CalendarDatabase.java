@@ -98,9 +98,9 @@ public class CalendarDatabase {
 		Cursor calendarsCursor = this.calendarAdapter.fetchAllCalendars();
 
 		while (calendarsCursor.moveToNext()) {
-    		String id = calendarsCursor.getString(calendarsCursor.getColumnIndex(CalendarHelper.KEY_CALENDAR_ID));
+    		String id = calendarsCursor.getString(calendarsCursor.getColumnIndex(CalendarTable.KEY_CALENDAR_ID));
     		//String title = calendarsCursor.getString(calendarsCursor.getColumnIndex(CalendarHelper.KEY_TITLE));
-    		boolean enabled = !calendarsCursor.getString(calendarsCursor.getColumnIndex(CalendarHelper.KEY_ENABLED)).equals("0");
+    		boolean enabled = !calendarsCursor.getString(calendarsCursor.getColumnIndex(CalendarTable.KEY_ENABLED)).equals("0");
 
     		Calendar calendar = calendarsMap.get(id);
     		

@@ -53,7 +53,7 @@ public class AlarmAdapter {
 	 */
 	public long insertAlarm(Alarm alarm) {
 		ContentValues initialValues = this.createContentValues(alarm, this.INSERT);
-		return this.database.insert(AlarmHelper.DATABASE_TABLE,	null, initialValues);
+		return this.database.insert(AlarmTable.NAME, null, initialValues);
 	}
 	
 	/**
@@ -63,22 +63,22 @@ public class AlarmAdapter {
 		ContentValues updateValues = this.createContentValues(alarm, this.UPDATE);
 
 		return this.database.update(
-					AlarmHelper.DATABASE_TABLE, 
+					AlarmTable.NAME, 
 					updateValues,
-					AlarmHelper.KEY_ALARM_ID + "=" + alarm.getId(),
+					AlarmTable.KEY_ALARM_ID + "=" + alarm.getId(),
 					null
 				) > 0;
 	}	
 
 	public Cursor fetchAllAlarms() {
 		return this.database.query(
-					AlarmHelper.DATABASE_TABLE, 
+					AlarmTable.NAME, 
 					new String[] {
-						AlarmHelper.KEY_ALARM_ID, 
-						AlarmHelper.KEY_ENABLED, 
-						AlarmHelper.KEY_WAKEUP_OFFSET,
-						AlarmHelper.KEY_WAKEUP_TIMEOUT,
-						AlarmHelper.KEY_SLEEP_TIME
+						AlarmTable.KEY_ALARM_ID, 
+						AlarmTable.KEY_ENABLED, 
+						AlarmTable.KEY_WAKEUP_OFFSET,
+						AlarmTable.KEY_WAKEUP_TIMEOUT,
+						AlarmTable.KEY_SLEEP_TIME
 					}, 
 					null, 
 					null, 
@@ -95,14 +95,14 @@ public class AlarmAdapter {
 		Cursor mCursor = 
 			this.database.query(
 				true, 
-				AlarmHelper.DATABASE_TABLE, 
+				AlarmTable.NAME, 
 				new String[] {
-					AlarmHelper.KEY_ENABLED, 
-					AlarmHelper.KEY_WAKEUP_OFFSET,
-					AlarmHelper.KEY_WAKEUP_TIMEOUT,
-					AlarmHelper.KEY_SLEEP_TIME
+					AlarmTable.KEY_ENABLED, 
+					AlarmTable.KEY_WAKEUP_OFFSET,
+					AlarmTable.KEY_WAKEUP_TIMEOUT,
+					AlarmTable.KEY_SLEEP_TIME
 				},
-				AlarmHelper.KEY_ALARM_ID + "=" + id,
+				AlarmTable.KEY_ALARM_ID + "=" + id,
 				null, 
 				null, 
 				null, 
@@ -117,13 +117,13 @@ public class AlarmAdapter {
 		ContentValues values = new ContentValues();
 		
 		if (type == this.INSERT) {
-			values.put(AlarmHelper.KEY_ALARM_ID, alarm.getId());
+			values.put(AlarmTable.KEY_ALARM_ID, alarm.getId());
 		}
 		
-		values.put(AlarmHelper.KEY_ENABLED, alarm.isEnabled());
-		values.put(AlarmHelper.KEY_WAKEUP_OFFSET, alarm.getWakeUpOffset());
-		values.put(AlarmHelper.KEY_WAKEUP_TIMEOUT, alarm.getWakeUpTimeout());
-		values.put(AlarmHelper.KEY_SLEEP_TIME, alarm.getSleepTime());
+		values.put(AlarmTable.KEY_ENABLED, alarm.isEnabled());
+		values.put(AlarmTable.KEY_WAKEUP_OFFSET, alarm.getWakeUpOffset());
+		values.put(AlarmTable.KEY_WAKEUP_TIMEOUT, alarm.getWakeUpTimeout());
+		values.put(AlarmTable.KEY_SLEEP_TIME, alarm.getSleepTime());
 		return values;
 	}	
 }

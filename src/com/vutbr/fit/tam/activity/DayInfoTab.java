@@ -23,22 +23,22 @@ public class DayInfoTab extends TabActivity {
 	        
 	        Bundle bundle = this.getIntent().getExtras();
 	        
-	        // Tab for Photos
+	        // Tab for day info
 	        TabSpec dayGeneral = tabHost.newTabSpec("Day");
 	        dayGeneral.setIndicator("Day", getResources().getDrawable(R.drawable.tab_day));
 	        Intent dayIntent = new Intent(this, Day.class);
 	        dayIntent.putExtras(bundle);
 	        dayGeneral.setContent(dayIntent);
 	        
-	        // Tab for Songs
+	        // Tab for day alarm
 	        TabSpec alarm = tabHost.newTabSpec("Alarm");
 	        // setting Title and Icon for the Tab
 	        alarm.setIndicator("Alarm", getResources().getDrawable(R.drawable.tab_alarm));
-	        Intent alarmIntent = new Intent(this, Alarm.class);
+	        Intent alarmIntent = new Intent(this, DayAlarm.class);
 	        alarmIntent.putExtras(bundle);
 	        alarm.setContent(alarmIntent);
 	        
-	        // Tab for Videos
+	        // Tab start sleep mode
 	        TabSpec sleepmode = tabHost.newTabSpec("Sleep mode");
 	        sleepmode.setIndicator("Sleep mode", getResources().getDrawable(R.drawable.tab_sleepmode));
 	        Intent sleepmodeIntent = new Intent(this, Sleepmode.class);

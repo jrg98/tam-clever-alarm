@@ -11,7 +11,7 @@ import android.widget.TimePicker;
 import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.gui.Days;
 
-public class Alarm extends Activity implements Days {
+public class DayAlarm extends Activity implements Days {
 
 	private TimePicker alarmTime;
 	private RadioButton alarmOn;
@@ -25,7 +25,7 @@ public class Alarm extends Activity implements Days {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.tab_alarm);
 
-        
+        /*
         this.alarmTime = (TimePicker) this.findViewById(R.id.timeAlarm);
         this.alarmTime.setIs24HourView(true);
         
@@ -35,12 +35,13 @@ public class Alarm extends Activity implements Days {
         Bundle bundle = this.getIntent().getExtras();
         int day = bundle.getInt("day");
         
+        
         this.actualDay = (TextView) this.findViewById(R.id.tv_day);
         actualDay.setText(days[day]);
         // TODO: get info about alarm
    
         this.setAlarmOn(true);
-        
+        */
 
         
     }

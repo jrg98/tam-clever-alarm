@@ -32,7 +32,7 @@ public class CalendarTable {
 	/**
 	 * Database definition
 	 */
-	protected static final String DATABASE_CREATE = 
+	protected static final String TABLE_CREATE = 
 		"create table " + NAME + " (" +
 		"	" + KEY_CALENDAR_ID + " int not null primary key, " +
 		"	" + KEY_TITLE + " text not null, " +

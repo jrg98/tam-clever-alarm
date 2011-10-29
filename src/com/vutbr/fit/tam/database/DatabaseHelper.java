@@ -32,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	 * @param database
 	 */
 	public void onCreate(SQLiteDatabase database) {
-		database.execSQL(CalendarTable.DATABASE_CREATE);
+		database.execSQL(CalendarTable.TABLE_CREATE);
 		database.execSQL(AlarmTable.TABLE_CREATE);
 	}
 

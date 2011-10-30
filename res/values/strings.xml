@@ -38,8 +38,17 @@
     <string name="off">Off</string>
     
     <string name="event">Event</string>
+    <string name="events">Events</string>
     <string name="date">Date</string>
     <string name="alarm">Alarm</string>
+    <string name="begin">Begin</string>
+    <string name="end">End</string>    
+    
+    <string name="not_set">Not set!</string>
+	<string name="alarm_set">Alarm has been set!</string>
+	<string name="alarm_not_set">Alarm has been canceled!</string>
+	<string name="sleepmode_set">Sleep mode has been set!</string>
+	<string name="sleepmode_not_set">Sleep mode has been canceled!</string>
 
     
 </resources>

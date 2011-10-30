@@ -17,10 +17,13 @@
    
    
   <!-- Screen Design for Photos -->
-  <TextView android:text="day general"
-  			android:padding="15dip"
-  			android:textSize="18dip"
+  <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:layout_width="fill_parent" android:padding="15dp">
+      <TextView android:text="@string/events" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18dip"></TextView>
+      <TextView android:text=":" android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="18dip"></TextView>
+  </LinearLayout>
+   <ListView android:id="@+id/dayEventList" 
+ 		    android:layout_height="wrap_content"
   			android:layout_width="fill_parent"
-  			android:layout_height="wrap_content"/>
+   />
     
 </LinearLayout>

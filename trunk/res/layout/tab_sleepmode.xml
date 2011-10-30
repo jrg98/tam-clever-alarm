@@ -42,13 +42,13 @@
          	>
                 <RadioButton android:text="@string/on" 
                 	android:layout_height="wrap_content" 
-                	android:id="@+id/alarmOn" 
+                	android:id="@+id/sleepModeOn" 
                 	android:layout_width="wrap_content" 
                 	android:checked="true"
                 />
                 <RadioButton android:text="@string/off" 
                 	android:layout_height="wrap_content" 
-                	android:id="@+id/alarmOff" 
+                	android:id="@+id/sleepModeOff" 
                 	android:layout_width="wrap_content"
                 />
             </RadioGroup>
@@ -67,7 +67,7 @@
         />
         
         <Button android:text="@string/button_save" 
-        	android:id="@+id/saveAlarm" 
+        	android:id="@+id/saveSleepMode" 
         	android:layout_gravity="center" 
         	android:layout_height="wrap_content" 
         	android:layout_width="wrap_content" 

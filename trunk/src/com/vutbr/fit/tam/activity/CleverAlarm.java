@@ -1,6 +1,7 @@
 package com.vutbr.fit.tam.activity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -8,15 +9,20 @@ import android.app.Activity;
 import android.app.Notification;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -24,6 +30,7 @@ import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.calendar.ChangeObserver;
 import com.vutbr.fit.tam.calendar.Event;
 import com.vutbr.fit.tam.database.AlarmAdapter;
+import com.vutbr.fit.tam.database.AlarmTable;
 import com.vutbr.fit.tam.database.EventsDatabase;
 import com.vutbr.fit.tam.gui.DaySimpleAdapter;
 import com.vutbr.fit.tam.gui.Days;
@@ -54,68 +61,18 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 	private ListView mainDaysListView;
 	private ArrayList<HashMap<String, String>> daysListItems;
 	
-	/*
-	private final int[] days = {R.string.shortday_MO, R.string.shortday_TU, R.string.shortday_WE,
-						  R.string.shortday_TH, R.string.shortday_FR, R.string.shortday_SA,
-						  R.string.shortday_SU };
-	*/
-	
 	
 	/**
 	 * Initialize activity
 	 */
     public void onCreate(Bundle savedInstanceState) {
+    	
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.main);
 
-
-        // initialize GUI elements
-        this.initList();
-        
-        Date date = new Date();
-        int day = date.getDay();
-        
-        
-        for (int i=0; i < 7; i++) {
-        	
-        	
-        	
-        	// load alarm and sleep time from db
-   
-    		this.addListItem(
-    				shortDays[i], 
-    				"07:55",
-    				"00:00",
-    				i == day
-    			);
-    		
-        }
-        
-  
-
-      this.createList();
- 
-       
-        /*
-        this.textView = (TextView) this.findViewById(R.id.textView);
-        
-        if (this.textView == null)
-        	Toast.makeText(this, "NULL", Toast.LENGTH_SHORT).show();
-        
-        this.queryButton = (Button) this.findViewById(R.id.queryButton);
-        this.alarmButton = (Button) this.findViewById(R.id.alarmButton);
-        this.ringingButton = (Button) this.findViewById(R.id.ringingButton);
-
-        
-        // 	append onClickListener, which is this class
-        this.queryButton.setOnClickListener(this);
-        this.alarmButton.setOnClickListener(this);
-        this.ringingButton.setOnClickListener(this);
-         */
-        
         // TODO not sure this is working always as requested, eg. app is in background
         // maybe a service will be better
-       // this.registerCalendarChangeObserver();
+        this.registerCalendarChangeObserver();
 
         // NOTIFICATION EXAMPLE
         this.notificationHelper = new NotificationHelper(this);
@@ -126,61 +83,37 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
         		NotificationHelper.TYPE_APPLICATION);
 
     }
-
     
     /**
-     * Query calendars for events
+     * Create menu
+     * OnResume because update after setting alarm
      */
-    private void query () {
-
- 
-    	EventsDatabase database = new EventsDatabase(this);
-    	
-    	Date from = new Date();
-    	from.setTime(from.getTime() - DateUtils.DAY_IN_MILLIS);
-    	Date to = new Date();
-    	to.setTime(to.getTime() + DateUtils.DAY_IN_MILLIS);
-    	
-		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_AVAILABLE)) {
-
-			int color = event.getColor();
-			String title = event.getTitle();
-			Date begin = event.getBeginDate();
-			Date end = event.getEndDate();
-			String allDay = event.isAllDayEvent() ? "Yes" : "No";
-			String busy = event.isBusy() ? "Yes" : "No";
-			/*
-			String colorString = Color.red(color) + ", " + Color.green(color) + "," + Color.blue(color);
-			String text = (String) textView.getText();
-			text += "Title: " + title + "\nBegin: " + begin + "\nEnd: " + end +
-					"\nAll Day: " + allDay + "\nBusy: " + busy + "\nColor: " + colorString + "\n\n";
-			textView.setText(text);
-		*/
-		}
+	@Override
+	protected void onResume() {
 		
-    	
-    }
-    
-
-    
-   
-	public void onClick(View view) {
-		/*
-		switch (view.getId()) {
-			case R.id.queryButton:
-				this.query();
-				break;
-			case R.id.alarmButton:
-				this.showAlarm();
-				break;
-			case R.id.ringingButton:
-				this.showRinging();
-				break;
-		
-		}
-		*/
+		super.onResume();
+        // initialize GUI elements
+		this.createtWeekMenu();
 	}
-	
+
+	/**
+	 * Create menu for 7 days
+	 */
+	private void createtWeekMenu() {
+		
+        this.initList();
+        
+		Date date = new Date();
+        int day = date.getDay();
+                
+        for (int i = 0; i < 7; i++) {
+
+    		this.addListItem(i, shortDays[i], i == day);
+    		
+        }
+ 
+		this.createList();
+	}
 	
 	/**
 	 * Initialize list
@@ -189,7 +122,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 		this.mainDaysListView = (ListView) findViewById(R.id.mainDaysListView);
 		this.daysListItems = new ArrayList<HashMap<String, String>>();
 	}
-	
+		
 	/**
 	 * Add new item to list
 	 * Must call initList at first
@@ -199,14 +132,56 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 	 * @param alarm string actual day set alarm 
 	 * @param sleepmode string actual day
 	 */
-    private void addListItem (int day, String alarm, String sleepmode, boolean today) {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put(Identifiers.DAY.toString(), this.getString(day));
-		map.put(Identifiers.ALARM.toString(), alarm);
-		map.put(Identifiers.SLEEPMODE.toString(), sleepmode);
-		map.put(Identifiers.TODAY.toString(), String.valueOf(today));
+    private void addListItem (int index, int day, boolean today) {
+    	
+    	 AlarmAdapter aD;
+    	 String alarm = null;
+    	 String sleepmode = null;
+    	 
+    	 HashMap<String, String> map = new HashMap<String, String>();
+    	 map.put(Identifiers.DAY.toString(), this.getString(day));
+    	 map.put(Identifiers.TODAY.toString(), String.valueOf(today));
+
+    	try {
+			aD = new AlarmAdapter(this).open();
+			Cursor cursorDAY = aD.fetchAlarm(index);
+						
+			if (cursorDAY.moveToFirst()) {
+				
+				final String timeFormat = DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE;
+						
+				if (cursorDAY.getInt(0) > 0) {
+					alarm = DateFormat.format(timeFormat, cursorDAY.getLong(2)).toString();
+				}
+				
+				sleepmode = DateFormat.format(timeFormat, cursorDAY.getLong(3)).toString();	
+
+			}
+			
+			if (alarm == null) {
+				alarm = this.getResources().getString(R.string.not_set) ;				
+			}
+			
+			if (sleepmode == null) {
+				sleepmode = this.getResources().getString(R.string.not_set);
+			}
+			
+
+			map.put(Identifiers.ALARM.toString(), alarm);
+			map.put(Identifiers.SLEEPMODE.toString(), sleepmode);
+			
+
+			aD.close();
 		
-		this.daysListItems.add(map);
+		} catch (Exception ex) {
+			// mozna hlaska o zlyhani nacitania DB
+			Log.e("CalendarChecker", "AlarmAdapter error: "+ ex.toString());
+			Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
+			return;
+		} finally {
+			this.daysListItems.add(map);
+		}
+
 	}
 	
 	
@@ -218,7 +193,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 		DaySimpleAdapter adapter = new DaySimpleAdapter(
 				this.getBaseContext(),
 				this.daysListItems, 
-				R.layout.mains_rows, 
+				R.layout.mains_row, 
 				new String[] {
 					Identifiers.DAY.toString(),
 					Identifiers.ALARM.toString(),
@@ -236,6 +211,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 		
 			this.mainDaysListView.setAdapter(adapter);			
 			this.mainDaysListView.setOnItemClickListener(this);
+			
 			
 	}
 	 	
@@ -285,5 +261,5 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 		this.startActivityForResult(intent, 0);
 					
 	}
-    
+	    
 }

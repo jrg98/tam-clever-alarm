@@ -5,14 +5,19 @@ import java.util.Date;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.vutbr.fit.tam.R;
+import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.calendar.Event;
+import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
 
 public class WidgetUpdateServise extends Service {
@@ -27,8 +32,7 @@ public class WidgetUpdateServise extends Service {
 		int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		
 		Event nextEvent = this.getNextEvent();
-		
-		
+		Alarm nextAlarm = this.getNextAlarm();
 		
 		// Actualize all showed widget
 		if (appWidgetIds.length > 0) {
@@ -46,9 +50,16 @@ public class WidgetUpdateServise extends Service {
 					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, "");
 				}
 				
+				final String timeFormat = DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE;
+				
 				// Set info about alarm
-				
-				
+				if (nextAlarm.isEnabled()) {
+					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, DateFormat.format(timeFormat, nextAlarm.getWakeUpTimeout()).toString());
+				} else
+				{
+					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, "");
+				}
+
 				// Set info about sleep mode
 				Boolean sleepMode = true; // only for try
 				
@@ -87,6 +98,42 @@ public class WidgetUpdateServise extends Service {
 
 	}
 	
+	
+	private Alarm getNextAlarm() {
+					
+	  		AlarmAdapter adapter;
+
+	  		Date date = new Date();
+	  		final int id = date.getDay();
+	  		// id = (id + 1) % 7 ????????
+	  		
+	  		Alarm alarm = new Alarm(id, false, 0, 0, 0);
+		
+	  		try {
+				adapter = new AlarmAdapter(this).open();
+			
+				Cursor cursorDAY = adapter.fetchAlarm(id);
+			
+				if (cursorDAY.moveToFirst()) {
+				
+					alarm.setEnabled(cursorDAY.getInt(0) > 0);
+					alarm.setWakeUpOffset(cursorDAY.getLong(1));
+					alarm.setWakeUpTimeout(cursorDAY.getLong(2));
+					alarm.setSleepTime(cursorDAY.getLong(3));
+									
+				}
+			
+			adapter.close();
+			
+	  		} catch (Exception ex) {
+	  			Log.e("DayAlarm", "AlarmAdapter error: "+ ex.toString());
+	  			return null;
+	  		}	  
+	  
+	  		return alarm;
+	  		
+	}
+	
 	// Get next event
 	private Event getNextEvent() {
 		
@@ -100,15 +147,7 @@ public class WidgetUpdateServise extends Service {
 		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_AVAILABLE)) {
 
 			return event;
-			
-			/*
-			String title = event.getTitle();
-			Date begin = event.getBeginDate();
-			Date end = event.getEndDate();
-
-			nextEvent = "Title: " + title + " Begin: " + begin + "\nEnd: " + end + "\n";
-			*/
-						
+									
 		}
 		
 		return null;

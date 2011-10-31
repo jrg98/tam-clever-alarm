@@ -11,7 +11,7 @@ public class Ringing extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.ringing);
-                
+               
     }
 	
 }

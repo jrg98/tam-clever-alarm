@@ -49,6 +49,10 @@
 	<string name="alarm_not_set">Alarm has been canceled!</string>
 	<string name="sleepmode_set">Sleep mode has been set!</string>
 	<string name="sleepmode_not_set">Sleep mode has been canceled!</string>
+	<string name="button_settings_ringtones">Ringtone</string>
+	<string name="button_settings_ringtones_description">Set the ringtone for alarm</string>
+	<string name="select_ringtone">Select ringtone</string>
+	<string name="play_ringtone">Play ringtone</string>
 
     
 </resources>

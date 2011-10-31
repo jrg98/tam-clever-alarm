@@ -45,6 +45,12 @@ public class Settings extends Activity implements OnItemClickListener {
 			R.drawable.button_calendar
 		);
 		
+		this.addListItem(
+				R.string.button_settings_ringtones, 
+				R.string.button_settings_ringtones_description,
+				R.drawable.button_settings_ringtone
+			);
+		
 		this.createList();
 
 	}
@@ -123,6 +129,10 @@ public class Settings extends Activity implements OnItemClickListener {
 	    	this.startActivityForResult(intent, 0);
 		}
 		
+		if (this.checkItem(map, R.string.button_settings_ringtones)) {
+	    	Intent intent = new Intent(this, RingtonesSettings.class);
+	    	this.startActivityForResult(intent, 0);
+		}
 	}
 
 }

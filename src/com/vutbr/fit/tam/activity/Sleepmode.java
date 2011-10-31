@@ -154,7 +154,6 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 	}
 
 
-	@Override
 	public void onClick(View view) {
 		
 		switch (view.getId()) {

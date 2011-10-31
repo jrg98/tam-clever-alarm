@@ -53,6 +53,8 @@
 	<string name="button_settings_ringtones_description">Set the ringtone for alarm</string>
 	<string name="select_ringtone">Select ringtone</string>
 	<string name="play_ringtone">Play ringtone</string>
+	<string name="stop_ringtone">Stop playing</string>
+	<string name="current_ringtone_name">Current ringtone:</string>
 
     
 </resources>

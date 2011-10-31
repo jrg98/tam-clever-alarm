@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * @author Zolex
@@ -21,31 +22,50 @@ import android.widget.Button;
  */
 public class RingtonesSettings extends Activity implements OnClickListener {
 	
-	private Button selectRingtoneButton;
+	private Button stopRingtoneButton;
 	private Button playRingtoneButton;
+	private Button selectRingtoneButton;
 	private Ringtone ringtone;
+	private TextView ringtoneName;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.ringtones_settings);
 
-        this.selectRingtoneButton = (Button) this.findViewById(R.id.selectRingtone);
-        this.selectRingtoneButton.setOnClickListener(this);
-        
         this.playRingtoneButton = (Button) this.findViewById(R.id.playRingtone);
         this.playRingtoneButton.setOnClickListener(this);
         
+        this.stopRingtoneButton = (Button) this.findViewById(R.id.stopRingtone);
+        this.stopRingtoneButton.setOnClickListener(this);
+        
+        this.selectRingtoneButton = (Button) this.findViewById(R.id.selectRingtone2);
+        this.selectRingtoneButton.setOnClickListener(this);
+        
+        this.ringtoneName = (TextView) this.findViewById(R.id.settingsRingtoneName);
     }
 
 	private void selectRingtone() {
+		stopRingtone();
 		Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER); 
 		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select alarm tone");
 	    startActivityForResult(intent, 1);
 	}
 	
 	private void playRingtone() {
-		if (ringtone != null) {
+		if (ringtone != null && ringtone.isPlaying() == false) {
 			ringtone.play();
+			playRingtoneButton.setEnabled(false);
+			stopRingtoneButton.setEnabled(true);
+		} else {
+			
+		}
+	}
+	
+	private void stopRingtone() {
+		if (ringtone != null && ringtone.isPlaying() == true) {
+			ringtone.stop();
+			playRingtoneButton.setEnabled(true);
+			stopRingtoneButton.setEnabled(false);
 		} else {
 			
 		}
@@ -56,6 +76,12 @@ public class RingtonesSettings extends Activity implements OnClickListener {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             if (uri != null) {
                 ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+                ringtoneName.setText(ringtone.getTitle(getApplicationContext()));
+                playRingtoneButton.setEnabled(true);
+            } else {
+            	ringtoneName.setText(R.string.not_set);
+            	playRingtoneButton.setEnabled(false);
+                stopRingtoneButton.setEnabled(false);
             }
 }
 	}
@@ -63,11 +89,14 @@ public class RingtonesSettings extends Activity implements OnClickListener {
 	public void onClick(View view) {
 		
 		switch (view.getId()) {
-			case R.id.selectRingtone:
+			case R.id.selectRingtone2:
 				this.selectRingtone();
 				break;
 			case R.id.playRingtone:
 				this.playRingtone();
+				break;
+			case R.id.stopRingtone:
+				this.stopRingtone();
 				break;
 			}
 			

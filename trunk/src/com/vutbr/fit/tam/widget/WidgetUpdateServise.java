@@ -144,7 +144,7 @@ public class WidgetUpdateServise extends Service {
     	Date to = new Date();
     	to.setTime(to.getTime() + DateUtils.DAY_IN_MILLIS);
     	    	
-		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_AVAILABLE)) {
+		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_DONT_CARE)) {
 
 			return event;
 									

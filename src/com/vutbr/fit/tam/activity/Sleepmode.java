@@ -134,7 +134,10 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 			
 			adapter = new AlarmAdapter(this).open();
 			
-			adapter.updateAlarm(this.alarm);
+			if (!adapter.updateAlarm(this.alarm)) {
+				adapter.insertAlarm(this.alarm);
+			}
+				
 			
 			adapter.close();
 			

@@ -52,9 +52,10 @@
 	<string name="button_settings_ringtones">Ringtone</string>
 	<string name="button_settings_ringtones_description">Set the ringtone for alarm</string>
 	<string name="select_ringtone">Select ringtone</string>
-	<string name="play_ringtone">Play ringtone</string>
+	<string name="test_ringing">Test ringing</string>
 	<string name="stop_ringtone">Stop playing</string>
 	<string name="current_ringtone_name">Current ringtone:</string>
+	<string name="no_ringtone">No rigntone selected!</string>
 
     
 </resources>

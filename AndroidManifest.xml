@@ -41,6 +41,7 @@
     	<receiver android:name=".alarm.AlarmLauncher"></receiver>
     	<receiver android:name=".calendar.CalendarChecker"></receiver>
     	<activity android:name=".activity.RingtonesSettings"></activity>
+    	<activity android:name=".activity.Ringing"></activity>
 
     </application>
     

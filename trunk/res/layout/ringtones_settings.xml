@@ -10,5 +10,7 @@
     <TextView android:layout_width="wrap_content" android:id="@+id/textView1" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:text="@string/current_ringtone_name"></TextView>
     <TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:layout_height="wrap_content" android:text="@string/not_set" android:id="@+id/settingsRingtoneName"></TextView>
     <Button android:text="@string/select_ringtone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dip" android:id="@+id/selectRingtone2"></Button>
+    <TextView android:layout_width="wrap_content" android:id="@+id/textView2" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_marginTop="5dip" android:layout_marginBottom="5dip" android:text="@string/settings_volume"></TextView>
+    <SeekBar android:id="@+id/seekBar1" android:layout_width="match_parent" android:layout_height="wrap_content"></SeekBar>
     
 </LinearLayout>

@@ -9,8 +9,10 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -24,24 +26,25 @@ import android.widget.Button;
 
 public class Ringing extends Activity implements OnClickListener {
 	
+	private AudioManager audioManager;
 	private Ringtone ringtone;
 	private Uri uri;
 	private Button stopButton;
 	private Button snoozeButton;
+	private int systemVolume;
+	private int systemRingMode;
+	private int ringingVolume;
 
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.ringing);
         
         final Window win = getWindow();
-        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        // Turn on the screen unless we are being launched from the AlarmAlert
-        // subclass.
+        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
         if (!getIntent().getBooleanExtra("SCREEN_OFF", false)) {
-        win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        } 
+        win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        }
         
         this.stopButton = (Button) this.findViewById(R.id.stopButton);
         this.stopButton.setOnClickListener(this);
@@ -55,39 +58,16 @@ public class Ringing extends Activity implements OnClickListener {
         if (uri != null) {
         	ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
         }
-        /*
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Wake up you lazy bitch!")
-               .setCancelable(false)
-               .setPositiveButton("Stop", new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                	   dialog.cancel();
-                	   stopRingtone();
-                	   finish();
-                   }
-               })
-               .setNegativeButton("Snooze", new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        stopRingtone();
-                        // TODO Schedule next alarm in x minutes
-                        Intent intent = new Intent(Ringing.this, AlarmLauncher.class);
-                        PendingIntent sender = PendingIntent.getBroadcast(Ringing.this,
-                                0, intent, 0);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTimeInMillis(System.currentTimeMillis());
-                        calendar.add(Calendar.SECOND, 70);
-
-                        // Schedule the alarm!
-                        AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
-                        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-                        finish();
-                   }
-               });
-        AlertDialog alert = builder.create();
-        */
+        
+        this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        // TODO Load ringingVolume from database... max volume:
+        this.ringingVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+        this.systemVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING); // Backup current volume
+        this.systemRingMode = audioManager.getRingerMode();
+        
+        this.audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        this.audioManager.setStreamVolume(AudioManager.STREAM_RING, ringingVolume, 0);
         startRinging();
-        /*alert.show();*/
     }
 	
 	private void startRinging() {
@@ -110,6 +90,8 @@ public class Ringing extends Activity implements OnClickListener {
         // Schedule the alarm!
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+        this.audioManager.setStreamVolume(AudioManager.STREAM_RING, systemVolume, 0); // Restore system volume
+        this.audioManager.setRingerMode(systemRingMode);
         finish();
 	}
 	
@@ -117,6 +99,8 @@ public class Ringing extends Activity implements OnClickListener {
 		if (ringtone != null && ringtone.isPlaying() == true) {
 			ringtone.stop();
 		}
+		this.audioManager.setStreamVolume(AudioManager.STREAM_RING, systemVolume, 0); // Restore system volume
+		this.audioManager.setRingerMode(systemRingMode);
 		finish();
 	}
 

@@ -117,4 +117,13 @@ public class Ringing extends Activity implements OnClickListener {
 		
 	}
 	
+	public void onPause() {
+		if (ringtone != null && ringtone.isPlaying() == true) {
+			ringtone.stop();
+		}
+		this.audioManager.setStreamVolume(AudioManager.STREAM_RING, systemVolume, 0); // Restore system volume
+		this.audioManager.setRingerMode(systemRingMode);
+		super.onPause();
+	}
+	
 }

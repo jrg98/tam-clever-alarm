@@ -82,6 +82,7 @@ public class CalendarsSettings extends Activity {
     	switch(item.getItemId()) {
     		case R.id.button_settings_menu_save:
     			this.save();
+    			this.finish();
     			break;
     		default:	
     			return super.onOptionsItemSelected(item);
@@ -159,7 +160,10 @@ public class CalendarsSettings extends Activity {
     	
     	Intent intent = new Intent();
         this.setResult(RESULT_OK, intent);
-        this.finish();
     }
     
+	public void onPause() {
+		this.save();
+		super.onPause();
+	}
 }

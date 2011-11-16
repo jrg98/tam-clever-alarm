@@ -101,7 +101,7 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 								
 			}
 		
-		adapter.close();
+			adapter.close();
 		
   		} catch (Exception ex) {
   			Log.e("DayAlarm", "AlarmAdapter error: "+ ex.toString());

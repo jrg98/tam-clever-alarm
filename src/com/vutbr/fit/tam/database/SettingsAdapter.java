@@ -6,6 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * 
@@ -61,7 +63,7 @@ public class SettingsAdapter {
 		return this.database.update(
 				SettingsTable.NAME, 
 				updateValues, 
-				SettingsTable.KEY+ "=" + key,
+				SettingsTable.KEY + "= '" + key + "'",
 				null
 			) > 0;
 	}
@@ -70,22 +72,23 @@ public class SettingsAdapter {
 	 * Delete setting
 	 */
 	public boolean deleteSetting(String key) {
-		return this.database.delete(SettingsTable.NAME, SettingsTable.KEY + "=" + key, null) > 0;
+		return this.database.delete(SettingsTable.NAME, SettingsTable.KEY + "= '" + key + "'", null) > 0;
 	}
 		
 
 	/**
 	 * Return a Cursor positioned at the defined calendar
 	 */
-	public String fetchSetting(String key) throws SQLException {
-		Cursor mCursor = this.database.query(true, SettingsTable.NAME, new String[] {
-				SettingsTable.VALUE},
-				SettingsTable.KEY + "=" + key, null, null, null, null, null);
-		if (mCursor != null) {
-			mCursor.moveToFirst();
+	public String fetchSetting(String key, String defaultValue) throws SQLException {
+		Cursor mCursor = this.database.query(
+			true, SettingsTable.NAME, new String[] {SettingsTable.VALUE},
+			SettingsTable.KEY + "= '" + key + "'", null, null, null, null, null);
+		
+		if (mCursor.moveToNext()) {
 			return mCursor.getString(0);
 		}
-		return null;
+		
+		return defaultValue;
 	}
 
 	private ContentValues createContentValues(String key, String value) {

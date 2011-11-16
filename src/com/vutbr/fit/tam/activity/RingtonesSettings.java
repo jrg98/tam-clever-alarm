@@ -30,6 +30,8 @@ import com.vutbr.fit.tam.database.*;
  */
 public class RingtonesSettings extends Activity implements OnClickListener {
 	
+	final private String DEFAULT_RINGTONE = "content://settings/system/ringtone";
+	
 	private Button playRingtoneButton;
 	private Button selectRingtoneButton;
 	private Ringtone ringtone;
@@ -101,11 +103,11 @@ public class RingtonesSettings extends Activity implements OnClickListener {
     	this.settingsAdapter.open();
     	// TODO Load volume value from database, max volume:
         //this.ringVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
-    	this.ringVolume = Integer.parseInt(settingsAdapter.fetchSetting("volume"));
+    	this.ringVolume = Integer.parseInt(settingsAdapter.fetchSetting("volume", "0"));
         
         // TODO Load uri from database, default ringtone:
         //uri = Uri.parse("content://settings/system/ringtone");
-        uri = Uri.parse(settingsAdapter.fetchSetting("uri"));
+        uri = Uri.parse(settingsAdapter.fetchSetting("uri", DEFAULT_RINGTONE));
         this.settingsAdapter.close();
     }
     

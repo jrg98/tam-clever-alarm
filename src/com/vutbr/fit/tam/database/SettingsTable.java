@@ -34,7 +34,7 @@ public class SettingsTable {
 	protected static final String TABLE_CREATE = 
 		"create table " + NAME + " (" +
 		"	" + KEY + " text not null, " +
-		"	" + VALUE + " text not null, " +
+		"	" + VALUE + " text not null" +
 		");";
 
 

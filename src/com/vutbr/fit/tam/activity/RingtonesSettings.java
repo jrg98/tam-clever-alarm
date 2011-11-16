@@ -101,12 +101,7 @@ public class RingtonesSettings extends Activity implements OnClickListener {
     
     private void load() {
     	this.settingsAdapter.open();
-    	// TODO Load volume value from database, max volume:
-        //this.ringVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
     	this.ringVolume = Integer.parseInt(settingsAdapter.fetchSetting("volume", "0"));
-        
-        // TODO Load uri from database, default ringtone:
-        //uri = Uri.parse("content://settings/system/ringtone");
         uri = Uri.parse(settingsAdapter.fetchSetting("uri", DEFAULT_RINGTONE));
         this.settingsAdapter.close();
     }
@@ -114,18 +109,13 @@ public class RingtonesSettings extends Activity implements OnClickListener {
     private void save() {
     	this.settingsAdapter.open();
         if (uri != null) {
-            // TODO Save uri.toString() to database
             if (!settingsAdapter.updateSetting("uri", uri.toString()));
         	    settingsAdapter.insertSetting("uri", uri.toString());	
         } else {
-            // TODO No ringtone selected (silence). Delete URI from database.
         	settingsAdapter.deleteSetting("key");
         }
-        
-        // TODO Save seekBar.getProgress() to database
         if (!this.settingsAdapter.updateSetting("volume", Integer.toString(seekBar.getProgress())))
         	this.settingsAdapter.insertSetting("volume", Integer.toString(seekBar.getProgress()));
-        
         this.settingsAdapter.close();
     }
 

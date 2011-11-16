@@ -86,6 +86,7 @@ public class RingtonesSettings extends Activity implements OnClickListener {
     	switch(item.getItemId()) {
     		case R.id.button_settings_menu_save:
     			this.save();
+    	        this.finish();
     			break;
     		default:	
     			return super.onOptionsItemSelected(item);
@@ -110,8 +111,6 @@ public class RingtonesSettings extends Activity implements OnClickListener {
         }
         
         // TODO Save seekBar.getProgress() to database
-        
-        this.finish();
     }
 
 	private void selectRingtone() {
@@ -145,25 +144,9 @@ public class RingtonesSettings extends Activity implements OnClickListener {
 			}
 			
 		}
-     /*	
+	
 	public void onPause() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Do you want to save settings?")
-		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                save();
-		                dialog.cancel();
-		           }
-		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
-		AlertDialog alert = builder.create();
-		alert.show();
 		this.save();
 		super.onPause();
-	}*/
+	}
 }

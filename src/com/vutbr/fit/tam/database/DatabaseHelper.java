@@ -34,6 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase database) {
 		database.execSQL(CalendarTable.TABLE_CREATE);
 		database.execSQL(AlarmTable.TABLE_CREATE);
+		database.execSQL(SettingsTable.TABLE_CREATE);
 	}
 
 	/**
@@ -51,6 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		);
 		database.execSQL("DROP TABLE IF EXISTS " + CalendarTable.NAME);
 		database.execSQL("DROP TABLE IF EXISTS " + AlarmTable.NAME);
+		database.execSQL("DROP TABLE IF EXISTS " + SettingsTable.NAME);
 		this.onCreate(database);
 	}
 

@@ -59,6 +59,8 @@
 	<string name="ringing_button_stop">Stop</string>
 	<string name="ringing_button_snooze">Snooze</string>
 	<string name="settings_volume">Volume of ringing:</string>
+	<string name="settings_minutes">minutes</string>
+	<string name="settings_snooze">Snooze time:</string>
 
     
 </resources>

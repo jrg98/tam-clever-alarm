@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.vutbr.fit.tam.database.*;
@@ -38,8 +39,10 @@ public class RingtonesSettings extends Activity implements OnClickListener {
 	private TextView ringtoneName;
 	private Uri uri;
 	private SeekBar seekBar;
+	private EditText snoozeTimeBox;
 	private AudioManager audioManager;
 	private int ringVolume;
+	private int snoozeTime; // in minutes
 	private SettingsAdapter settingsAdapter;
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,11 @@ public class RingtonesSettings extends Activity implements OnClickListener {
         this.seekBar = (SeekBar) this.findViewById(R.id.setVolumeBar);
         this.seekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
         
+        this.snoozeTimeBox = (EditText) this.findViewById(R.id.snoozeTime);
+        
         this.load();
+        
+        this.snoozeTimeBox.setText(Integer.toString(snoozeTime));
         
         this.seekBar.setProgress(ringVolume);
         
@@ -102,6 +109,7 @@ public class RingtonesSettings extends Activity implements OnClickListener {
     private void load() {
     	this.settingsAdapter.open();
     	this.ringVolume = Integer.parseInt(settingsAdapter.fetchSetting("volume", "0"));
+    	this.snoozeTime = Integer.parseInt(settingsAdapter.fetchSetting("snoozetime", "5"));
         uri = Uri.parse(settingsAdapter.fetchSetting("uri", DEFAULT_RINGTONE));
         this.settingsAdapter.close();
     }
@@ -116,12 +124,15 @@ public class RingtonesSettings extends Activity implements OnClickListener {
         }
         if (!this.settingsAdapter.updateSetting("volume", Integer.toString(seekBar.getProgress())))
         	this.settingsAdapter.insertSetting("volume", Integer.toString(seekBar.getProgress()));
+        if (!this.settingsAdapter.updateSetting("snoozetime", snoozeTimeBox.getText().toString()));
+        	this.settingsAdapter.insertSetting("snoozetime", snoozeTimeBox.getText().toString());
         this.settingsAdapter.close();
     }
 
 	private void selectRingtone() {
 		Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER); 
 		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select alarm ringtone");
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
 	    startActivityForResult(intent, 1);
 	}
 	

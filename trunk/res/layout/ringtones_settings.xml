@@ -11,6 +11,13 @@
     <Button android:text="@string/select_ringtone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dip" android:id="@+id/selectRingtone2"></Button>
     <TextView android:layout_width="wrap_content" android:id="@+id/textView2" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_marginTop="5dip" android:layout_marginBottom="5dip" android:text="@string/settings_volume"></TextView>
     <SeekBar android:layout_width="match_parent" android:layout_height="wrap_content" android:progress="50" android:id="@+id/setVolumeBar" android:layout_marginLeft="15dip" android:layout_marginRight="15dip"></SeekBar>
+    <TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:id="@+id/textView3" android:text="@string/settings_snooze" android:layout_marginTop="5dip" android:layout_marginBottom="5dip"></TextView>
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout2">
+        <EditText android:layout_weight="1" android:layout_height="wrap_content" android:inputType="number" android:maxLength="10" android:layout_width="100dip" android:id="@+id/snoozeTime">
+            <requestFocus></requestFocus>
+        </EditText>
+        <TextView android:layout_weight="1" android:layout_height="wrap_content" android:id="@+id/textView4" android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/settings_minutes" android:layout_marginLeft="5dip" android:layout_width="match_parent"></TextView>
+    </LinearLayout>
     <Button android:layout_height="wrap_content" android:layout_marginTop="15dip" android:id="@+id/playRingtone" android:text="@string/test_ringing" android:layout_width="wrap_content" android:layout_gravity="center"></Button>
     
 </LinearLayout>

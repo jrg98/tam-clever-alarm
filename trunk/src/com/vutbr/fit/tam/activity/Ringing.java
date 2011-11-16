@@ -35,6 +35,7 @@ public class Ringing extends Activity implements OnClickListener {
 	private int systemVolume;
 	private int systemRingMode;
 	private int ringVolume;
+	private int snoozeTime; // in seconds!
 	private SettingsAdapter settingsAdapter;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,7 @@ public class Ringing extends Activity implements OnClickListener {
     private void load() {
     	this.settingsAdapter.open();
     	this.ringVolume = Integer.parseInt(settingsAdapter.fetchSetting("volume", "0"));
+    	snoozeTime = Integer.parseInt(settingsAdapter.fetchSetting("snoozetime", "300"));
         uri = Uri.parse(settingsAdapter.fetchSetting("uri", DEFAULT_RINGTONE));
         this.settingsAdapter.close();
     }
@@ -94,7 +96,7 @@ public class Ringing extends Activity implements OnClickListener {
                 0, intent, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.SECOND, 10);
+        calendar.add(Calendar.SECOND, snoozeTime*60);
 
         // Schedule the alarm!
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);

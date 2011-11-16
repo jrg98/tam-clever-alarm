@@ -6,9 +6,7 @@ package com.vutbr.fit.tam.activity;
 import com.vutbr.fit.tam.R;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.Ringtone;
@@ -22,8 +20,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import com.vutbr.fit.tam.database.*;
+
 
 /**
  * @author Zolex
@@ -39,11 +38,14 @@ public class RingtonesSettings extends Activity implements OnClickListener {
 	private SeekBar seekBar;
 	private AudioManager audioManager;
 	private int ringVolume;
+	private SettingsAdapter settingsAdapter;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.ringtones_settings);
 
+        this.settingsAdapter = new SettingsAdapter(this);
+        
         this.playRingtoneButton = (Button) this.findViewById(R.id.playRingtone);
         this.playRingtoneButton.setOnClickListener(this);
         
@@ -96,21 +98,33 @@ public class RingtonesSettings extends Activity implements OnClickListener {
     }
     
     private void load() {
+    	this.settingsAdapter.open();
     	// TODO Load volume value from database, max volume:
-        this.ringVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING); 
+        //this.ringVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+    	this.ringVolume = Integer.parseInt(settingsAdapter.fetchSetting("volume"));
         
         // TODO Load uri from database, default ringtone:
-        uri = Uri.parse("content://settings/system/ringtone");
+        //uri = Uri.parse("content://settings/system/ringtone");
+        uri = Uri.parse(settingsAdapter.fetchSetting("uri"));
+        this.settingsAdapter.close();
     }
     
     private void save() {
+    	this.settingsAdapter.open();
         if (uri != null) {
             // TODO Save uri.toString() to database
+            if (!settingsAdapter.updateSetting("uri", uri.toString()));
+        	    settingsAdapter.insertSetting("uri", uri.toString());	
         } else {
             // TODO No ringtone selected (silence). Delete URI from database.
+        	settingsAdapter.deleteSetting("key");
         }
         
         // TODO Save seekBar.getProgress() to database
+        if (!this.settingsAdapter.updateSetting("volume", Integer.toString(seekBar.getProgress())))
+        	this.settingsAdapter.insertSetting("volume", Integer.toString(seekBar.getProgress()));
+        
+        this.settingsAdapter.close();
     }
 
 	private void selectRingtone() {

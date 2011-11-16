@@ -37,6 +37,7 @@ public class Ringing extends Activity implements OnClickListener {
 	private int ringVolume;
 	private int snoozeTime; // in seconds!
 	private SettingsAdapter settingsAdapter;
+	private boolean stop;
 
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +71,7 @@ public class Ringing extends Activity implements OnClickListener {
         
         this.audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         this.audioManager.setStreamVolume(AudioManager.STREAM_RING, ringVolume, 0);
+        this.stop = false;
         startRinging();
     }
 	
@@ -96,14 +98,13 @@ public class Ringing extends Activity implements OnClickListener {
                 0, intent, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.SECOND, snoozeTime*60);
+        calendar.add(Calendar.SECOND, snoozeTime);
 
         // Schedule the alarm!
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
         this.audioManager.setStreamVolume(AudioManager.STREAM_RING, systemVolume, 0); // Restore system volume
         this.audioManager.setRingerMode(systemRingMode);
-        finish();
 	}
 	
 	private void stopRinging() {
@@ -112,6 +113,7 @@ public class Ringing extends Activity implements OnClickListener {
 		}
 		this.audioManager.setStreamVolume(AudioManager.STREAM_RING, systemVolume, 0); // Restore system volume
 		this.audioManager.setRingerMode(systemRingMode);
+		this.stop = true;
 		finish();
 	}
 
@@ -123,18 +125,14 @@ public class Ringing extends Activity implements OnClickListener {
 			break;
 		case R.id.snoozeButton:
 			this.snooze();
+			finish();
 			break;
 		}
-		
 	}
 	
 	public void onPause() {
-		if (ringtone != null && ringtone.isPlaying() == true) {
-			ringtone.stop();
-		}
-		this.audioManager.setStreamVolume(AudioManager.STREAM_RING, systemVolume, 0); // Restore system volume
-		this.audioManager.setRingerMode(systemRingMode);
+		if (!stop) snooze();
+		finish();
 		super.onPause();
 	}
-	
 }

@@ -25,14 +25,11 @@
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:orientation="vertical"
 	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	   	android:layout_gravity="center_horizontal"
-	   	android:paddingLeft="10px"
-	    android:layout_weight="1"
-		android:paddingTop="7px"
-		android:paddingRight="10px"
+	    android:paddingLeft="10px"
+	    android:paddingRight="10px"
 		android:layout_marginLeft="20dp"
-	    >
+		android:paddingTop="20dp"
+	    android:layout_height="95dp" android:layout_gravity="center">
  
  		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	    	android:orientation="horizontal"
@@ -40,9 +37,8 @@
 	    	android:layout_height="wrap_content"
 	   		android:layout_gravity="center_horizontal"
 	    	android:textSize="20px"
-	    	
-	    
 	    	android:layout_marginRight="20dp"
+	    	android:paddingTop="10dp"
 	    >
  			<TextView
  				android:layout_width="wrap_content"
@@ -50,6 +46,7 @@
 	         	android:text="@string/alarm"
 	         	android:textStyle="bold"
 	         	android:textColor="#E1E1E1"
+	         	
 	         	android:layout_marginLeft="10dp"
 	         />
 	         
@@ -58,6 +55,7 @@
 	         	android:layout_height="fill_parent"
 	         	android:text=": "
 	         	android:textStyle="bold"
+	         	
 	         	android:textColor="#E1E1E1"
 	         />
 	         
@@ -66,6 +64,7 @@
 	         	android:layout_width="fill_parent"
 	         	android:layout_height="fill_parent"
 	         	android:text="22:22"
+	         	
 	         	android:textColor="#E1E1E1"
 	         />
 	         
@@ -79,18 +78,9 @@
 	    		android:layout_height="wrap_content"
 	   			android:layout_gravity="center_horizontal"
 	    		android:textSize="20px"
-	    		
 	    		android:layout_marginRight="20dp"
 	    	>
-	    	
- 				<TextView	
- 					android:layout_width="wrap_content"
-	         		android:layout_height="fill_parent"
-	         		android:text="@string/sleep_mode"
-	         		android:textStyle="bold"
-	         		android:textColor="#F5F5F1"
-	         		android:layout_marginLeft="10dp"
-	       		  />
+ 			     <TextView android:textColor="#F5F5F1" android:textStyle="bold" android:layout_marginLeft="10dp" android:layout_width="wrap_content" android:layout_height="fill_parent" android:text="@string/sleep_mode"></TextView>
 	       		  
   				<TextView	
  					android:layout_width="wrap_content"

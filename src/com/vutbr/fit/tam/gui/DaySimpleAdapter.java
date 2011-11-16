@@ -3,7 +3,10 @@ package com.vutbr.fit.tam.gui;
 import java.util.HashMap;
 import java.util.List;
 
+import com.vutbr.fit.tam.R;
+
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
@@ -28,10 +31,15 @@ public class DaySimpleAdapter extends SimpleAdapter {
 	  View view = super.getView(position, convertView, parent);
 
 	  if (position == this.position) {
-		  view.setBackgroundColor(TODAY_BACKGROUND);
+		//  view.setBackgroundColor(TODAY_BACKGROUND);
+		  
+		  
+		  
+		  view.setBackgroundResource(R.drawable.menu_today);
 	  }
 	  else {
-		  view.setBackgroundColor(DAY_BACKGROUND);
+		  //view.setBackgroundColor(DAY_BACKGROUND);
+		  view.setBackgroundResource(R.drawable.menu_day);
 	  }
 	
 	  return view;

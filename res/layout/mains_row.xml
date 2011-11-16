@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#00EAFF"
+    android:background="@drawable/menu_day"
     android:id="@+id/dayBackground"
     >
      
@@ -18,7 +18,8 @@
 		android:text="WE"
 		android:textSize="24px"
 	    android:textStyle="bold"
-	    android:textColor="@android:color/black"
+	    android:layout_marginLeft="17dp"
+	    android:textColor="@android:color/white"
 		/>
  
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -30,6 +31,7 @@
 	    android:layout_weight="1"
 		android:paddingTop="7px"
 		android:paddingRight="10px"
+		android:layout_marginLeft="20dp"
 	    >
  
  		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -38,21 +40,33 @@
 	    	android:layout_height="wrap_content"
 	   		android:layout_gravity="center_horizontal"
 	    	android:textSize="20px"
-	    	android:background="#F5F5F1"
+	    	
+	    
+	    	android:layout_marginRight="20dp"
 	    >
  			<TextView
  				android:layout_width="wrap_content"
 	         	android:layout_height="fill_parent"
-	         	android:text=" Alarm: "
+	         	android:text="@string/alarm"
 	         	android:textStyle="bold"
-	         	android:textColor="#B6B6B6"
+	         	android:textColor="#E1E1E1"
+	         	android:layout_marginLeft="10dp"
 	         />
+	         
+	         	<TextView
+ 				android:layout_width="wrap_content"
+	         	android:layout_height="fill_parent"
+	         	android:text=": "
+	         	android:textStyle="bold"
+	         	android:textColor="#E1E1E1"
+	         />
+	         
 
 	    	<TextView android:id="@+id/dayRowAlarm"
 	         	android:layout_width="fill_parent"
 	         	android:layout_height="fill_parent"
 	         	android:text="22:22"
-	         	android:textColor="#B6B6B6"
+	         	android:textColor="#E1E1E1"
 	         />
 	         
 
@@ -65,17 +79,26 @@
 	    		android:layout_height="wrap_content"
 	   			android:layout_gravity="center_horizontal"
 	    		android:textSize="20px"
-	    		android:background="#B6B6B6"
+	    		
+	    		android:layout_marginRight="20dp"
 	    	>
 	    	
  				<TextView	
  					android:layout_width="wrap_content"
 	         		android:layout_height="fill_parent"
-	         		android:text=" Sleep mode: "
+	         		android:text="@string/sleep_mode"
+	         		android:textStyle="bold"
+	         		android:textColor="#F5F5F1"
+	         		android:layout_marginLeft="10dp"
+	       		  />
+	       		  
+  				<TextView	
+ 					android:layout_width="wrap_content"
+	         		android:layout_height="fill_parent"
+	         		android:text=": "
 	         		android:textStyle="bold"
 	         		android:textColor="#F5F5F1"
 	       		  />
- 
  
 	    		<TextView android:id="@+id/dayRowSleepmode"
 	             	android:layout_width="fill_parent"

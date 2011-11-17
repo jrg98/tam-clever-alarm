@@ -20,40 +20,45 @@ import android.widget.Toast;
 
 public class CalendarChecker extends BroadcastReceiver {
 
-	private static Date toDay;
-	private static long cTime;
-	private static Date cDate;
+	private Date toDay;
+	private long currentTime;
+	private Date currentDate;
+	private boolean alarmActive;
 	
 	private int AlarmColumnIndex = 3;
 
 	
 	@Override
 	public void onReceive(Context c, Intent arg1) {
-		// TODO vybrat udaje z kalendara a upravit podla nich alarm
 		
-		cTime = System.currentTimeMillis();
-		cDate = new Date(cTime);
+		currentTime = System.currentTimeMillis();
+		currentDate = new Date(currentTime);
 		
 		EventsDatabase eD = new EventsDatabase(c);
 		this.getToday();
-		Event e = eD.getFirstEvent(toDay, EventsDatabase.STATUS_AVAILABLE);
+		Event e;
 		
-		// today as day of week 0(Sun)-6(Sat)
-		//int dayID = (6+cDate.getDay())%7;
-		int dayID = cDate.getDay();
+		int dayID = currentDate.getDay();
+		
+		
 		
 		long actAlarm;
 		AlarmAdapter aD;
-		Alarm alarm;
-		long updateAlarm;
+		Alarm dbAlarm;
+		long dayAlarm;
 		
 		try {
 			aD = new AlarmAdapter(c).open();
 			Cursor cursorACT = aD.fetchAlarm(Alarm.ACTUAL_ALARM_ID);
 			Cursor cursorDAY = aD.fetchAlarm(dayID);
 			
+			e = eD.getFirstEvent(toDay, EventsDatabase.STATUS_AVAILABLE);
+			
 			if (cursorDAY.moveToFirst()) {
-				alarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getInt(1), cursorDAY.getInt(2), cursorDAY.getInt(3));
+				dbAlarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getInt(1), cursorDAY.getInt(2), cursorDAY.getInt(3));
+				// uprava hodnoty aby zodpovedala pouzitiu
+				dbAlarm.setWakeUpTimeout(alarmRestruct(dbAlarm.getWakeUpTimeout()));
+				
 			} else {
 				// ak nie je ziadny obsah v tabulke pre dany den, nic sa nedeje
 				Log.e("CalendarChecker", "Empty DB.");
@@ -61,21 +66,39 @@ public class CalendarChecker extends BroadcastReceiver {
 				return;
 			}
 			
-			updateAlarm = e.getBeginDate().getTime()-alarm.getWakeUpOffset();
-			if (updateAlarm > alarm.getWakeUpTimeout()) updateAlarm = alarm.getWakeUpTimeout();
-			
-			if (cursorACT.moveToFirst()) {
-				// ak mame nejaky zaznam alarmu, tak zistime ci je potrebne alarm updatovat
-				actAlarm = cursorACT.getLong(AlarmColumnIndex);
-				
-				if (actAlarm != updateAlarm && alarm.isEnabled()) updateExistingAlarm(aD, updateAlarm, c);
-			} else if (alarm.isEnabled()){
-				// ak ziaden alarm ulozeny nemame, a ma sa spustit, tak ho pridame
-				addNewAlarm(aD, updateAlarm, c);
-			} else {
+			// ak neni na dnes alarm, zrusime vsetky a koncime
+			if (!dbAlarm.isEnabled()) {
 				cancelAlarm(c);
+				aD.close();
+				return;
 			}
-			// !!!!!!!!!! bacha pri boote treba vzdy nastavit alarm !!!!!!!!!!!!!!!!!!!!!!
+			
+			// nastavenie hodnoty dayAlarm
+			if (e.getBeginDate().getTime() - dbAlarm.getWakeUpOffset() < dbAlarm.getWakeUpTimeout()) dayAlarm = e.getBeginDate().getTime() - dbAlarm.getWakeUpOffset();
+			else dayAlarm = dbAlarm.getWakeUpTimeout();	
+			
+			// nastavenie actAlarm, ak neexistuje zaznam v tabulke, nastavi sa na dayAlarm a vlozi do db, a nastavi sa nan alarm
+			if (cursorACT.moveToFirst()) {
+				actAlarm = cursorACT.getInt(AlarmColumnIndex);
+				alarmActive = cursorACT.getInt(0)>0;
+			} else { 
+				actAlarm = dayAlarm;
+				addNewAlarm(aD, actAlarm, c);
+				setAlarmTime(actAlarm, c);
+				alarmActive = true;
+			}
+			
+			// ak je alarm spravne na dnesok a nema byt spusteny, tak rusim vsetky alarmy - nastane ak sa zrusi na widgete
+			if (alarmIsToday(actAlarm) && !alarmActive) {
+				cancelAlarm(c);
+				aD.close();
+				return;
+			}
+			
+			if (actAlarm != dayAlarm) {
+				// nastavujeme alarm iba ak este nenastal
+				if (dayAlarm < currentTime) updateExistingAlarm(aD, dayAlarm, c);
+			}
 			
 			aD.close();
 			
@@ -91,20 +114,20 @@ public class CalendarChecker extends BroadcastReceiver {
 	}
 	// Sets variable toDay to beggining of current day
 	private void getToday() {
-		toDay = new Date(cTime-cDate.getHours()*(60*60*1000)-cDate.getMinutes()*(60*1000));
+		toDay = new Date(currentTime-currentDate.getHours()*(60*60*1000)-currentDate.getMinutes()*(60*1000));
 	}
 	
 	// updatene alarm v databazi a zaroven nastavi dany alarm na spustenie
 	public void updateExistingAlarm(AlarmAdapter aD, long atime, Context c) {
 		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, atime);
 		aD.updateAlarm(a);
-		if (a.getSleepTime() > cTime) setAlarmTime(a.getSleepTime(), c);
+		if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
 	}
 	
 	public void addNewAlarm(AlarmAdapter aD, long atime, Context c) {
 		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, atime);
 		aD.insertAlarm(a);
-		if (a.getSleepTime() > cTime) setAlarmTime(a.getSleepTime(), c);
+		if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
 
 	}
 	
@@ -122,6 +145,17 @@ public class CalendarChecker extends BroadcastReceiver {
 		Intent i=new Intent(c, AlarmLauncher.class);
 	    PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
 	    mgr.cancel(pi);
+	}
+	
+	private long alarmRestruct(long offset) {
+		Date a = new Date(currentDate.getYear(), currentDate.getMonth(), currentDate.getDate());
+		return a.getTime()+offset;
+	}
+	
+	private boolean alarmIsToday(long a) {
+		Date d = new Date(a);
+		if (d.getDay() == currentDate.getDay()) return true;
+		else return false;
 	}
 	
 	// Sets variable lastDay to Sunday of the current week, at 23:59:XX

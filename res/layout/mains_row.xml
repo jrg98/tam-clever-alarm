@@ -16,9 +16,9 @@
 	   	android:height="52dp"
 		android:gravity="center"
 		android:text="WE"
-		android:textSize="24px"
+		android:textSize="30px"
 	    android:textStyle="bold"
-	    android:layout_marginLeft="17dp"
+	    android:layout_marginLeft="20dp"
 	    android:textColor="@android:color/white"
 		/>
  

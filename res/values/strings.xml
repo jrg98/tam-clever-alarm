@@ -61,6 +61,8 @@
 	<string name="settings_volume">Volume of ringing:</string>
 	<string name="settings_minutes">minutes</string>
 	<string name="settings_snooze">Snooze time:</string>
+	<string name="event_advance">Event advance</string>
+	<string name="advance">Advance</string>
 
     
 </resources>

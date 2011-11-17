@@ -1,6 +1,8 @@
 package com.vutbr.fit.tam.activity;
 
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -27,7 +30,7 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 	private Button saveAlarm;
 	
 	private TextView actualDay;
-	
+	private LinearLayout dayBackground;
 	private int day;
 	
 	private Alarm alarm;
@@ -53,6 +56,15 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
         this.actualDay = (TextView) this.findViewById(R.id.tv_day);
         actualDay.setText(days[day]);
              
+        Date date = new Date();
+        if (date.getDay() == this.day ) {
+        	this.dayBackground = (LinearLayout) this.findViewById(R.id.tab_day_background);
+        	this.dayBackground.setBackgroundResource(R.drawable.tab_today_bg);
+    	}
+    
+        //android:id="@+id/tab_day_background" 
+        	    //android:background="@drawable/tab_day_bg"
+        
     }
 	
 	@Override

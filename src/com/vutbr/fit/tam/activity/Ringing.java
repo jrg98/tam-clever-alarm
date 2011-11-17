@@ -35,7 +35,7 @@ public class Ringing extends Activity implements OnClickListener {
 	private int systemVolume;
 	private int systemRingMode;
 	private int ringVolume;
-	private int snoozeTime; // in seconds!
+	private int snoozeTime; // in minutes
 	private SettingsAdapter settingsAdapter;
 	private boolean stop;
 
@@ -98,7 +98,7 @@ public class Ringing extends Activity implements OnClickListener {
                 0, intent, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.SECOND, snoozeTime);
+        calendar.add(Calendar.SECOND, snoozeTime*60);
 
         // Schedule the alarm!
         AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
@@ -130,9 +130,9 @@ public class Ringing extends Activity implements OnClickListener {
 		}
 	}
 	
-	public void onPause() {
+	public void onStop() {
 		if (!stop) snooze();
 		finish();
-		super.onPause();
+		super.onStop();
 	}
 }

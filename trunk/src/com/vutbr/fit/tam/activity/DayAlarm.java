@@ -128,7 +128,7 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 	private void showAlarm() {
 		
 		setAlarmIndicatorOn(alarm.isEnabled());
-		setAlarmTimeIndicator(alarm.getWakeUpTimeout());
+		setAlarmTimeIndicator(alarm.getWakeUpTimeout() - alarm.getWakeUpOffset());
 		
 	}
 	

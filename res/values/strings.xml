@@ -63,6 +63,7 @@
 	<string name="settings_snooze">Snooze time:</string>
 	<string name="event_advance">Event advance</string>
 	<string name="advance">Advance</string>
-
+	<string name="advance_set">Time advance has been set!</string>
+	<string name="advance_not_set">Time advance has been set!</string>
     
 </resources>

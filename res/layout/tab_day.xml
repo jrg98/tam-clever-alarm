@@ -11,17 +11,19 @@
         <TextView android:id="@+id/tv_day" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:text="day" android:layout_gravity="center" android:textStyle="bold" android:layout_width="wrap_content"></TextView>
     
   <LinearLayout android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_width="match_parent" android:paddingLeft="15dp" android:paddingRight="15dp" android:paddingTop="15dp">
-      <TextView android:text="@string/advance" android:layout_width="wrap_content" android:textSize="18dip" android:layout_height="match_parent" android:layout_gravity="center_horizontal" android:paddingTop="10dp"/>
-      <TextView android:text=":" android:layout_width="wrap_content" android:textSize="18dip" android:paddingTop="10dp" android:layout_height="match_parent"/>
+      <TextView android:text="@string/advance" android:layout_width="wrap_content" android:textSize="18dip" android:layout_height="match_parent" android:layout_gravity="center_horizontal" android:paddingTop="10dp" android:textColor="@android:color/white"/>
+      <TextView android:text=":" android:layout_width="wrap_content" android:textSize="18dip" android:paddingTop="10dp" android:layout_height="match_parent" android:textColor="@android:color/white"/>
       <Spinner android:layout_weight="1" android:id="@+id/advance" android:layout_height="wrap_content" android:prompt="@string/event_advance" android:layout_width="match_parent"></Spinner>
   </LinearLayout>
   <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:layout_width="fill_parent" android:padding="15dp">
-      <TextView android:text="@string/events" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18dip"></TextView>
-      <TextView android:text=":" android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="18dip"></TextView>
+      <TextView android:text="@string/events" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18dip" android:textColor="@android:color/white"/>
+      <TextView android:text=":" android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="18dip" android:textColor="@android:color/white"></TextView>
   </LinearLayout>
    <ListView android:id="@+id/dayEventList" 
  		    android:layout_width="fill_parent"
-   			android:scrollbars="none" android:layout_height="225dp"/>
+   			android:scrollbars="none" android:layout_height="225dp"
+   			android:divider="@android:color/white"
+   			/>
    </LinearLayout>
    </ScrollView>
 </LinearLayout>

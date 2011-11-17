@@ -3,39 +3,56 @@ package com.vutbr.fit.tam.activity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.graphics.Color;
 
 
 import android.os.Bundle;
+import android.os.Debug;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 
 import com.vutbr.fit.tam.R;
+import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.calendar.Event;
+import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
 import com.vutbr.fit.tam.gui.DaySimpleAdapter;
 import com.vutbr.fit.tam.gui.Days;
+import com.vutbr.fit.tam.gui.ListViewUtility;
 
-public class Day extends Activity implements Days {
+public class Day extends Activity implements Days, OnItemSelectedListener {
 
 	private enum Identifiers {
 		EVENT, BEGIN, END
 	};
 	
 	private TextView actualDay;
-	
+	private LinearLayout dayBackground;
+	private Spinner advance;
 	private ListView daysEventListView;
 	private ArrayList<HashMap<String, String>> eventListItems;
 			
 	private int day;
+	private Alarm alarm;
+	private Event firstEvent;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +63,27 @@ public class Day extends Activity implements Days {
 			        
         this.actualDay = (TextView) this.findViewById(R.id.tv_day);
         actualDay.setText(days[this.day]);
-        	        
+        
+        this.alarm = this.getDayAlarm(this.day);
+        	       
+        this.advance = (Spinner) this.findViewById(R.id.advance);
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(
+                this, R.array.advance, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        advance.setAdapter(adapter);
+        advance.setSelection(this.setAdvanceId());
+        advance.setOnItemSelectedListener(this);
+      //  advance.setOnItemSelectedListener(new AdvanceSelectedListener());
+       
+        // Set background
+        Date date = new Date();
+        if (date.getDay() == this.day ) {
+        	this.dayBackground = (LinearLayout) this.findViewById(R.id.tab_day_background);
+        	this.dayBackground.setBackgroundResource(R.drawable.tab_today_bg);
+    	}
+
+        
+        
         initList();
         loadDayEvents();
         createList();
@@ -85,6 +122,9 @@ public class Day extends Activity implements Days {
 							 event.getEndDate()
 							 );
 		}
+		
+		this.firstEvent = database.getFirstEvent(from, EventsDatabase.STATUS_DONT_CARE);
+		
     }
     
     
@@ -130,8 +170,95 @@ public class Day extends Activity implements Days {
 				}
 			);
 		
-			this.daysEventListView.setAdapter(adapter);							
+			this.daysEventListView.setAdapter(adapter);
+			ListViewUtility.setListViewHeightBasedOnChildren(daysEventListView);
 			
 	}
-	    
+	
+	
+	/*
+	 * Return index of spinner which depends on alarm time
+	 */
+	private int setAdvanceId() {
+		
+		
+		long getWakeUpOffset = this.alarm.getWakeUpOffset();
+		
+		Log.v("LOOG", String.valueOf(getWakeUpOffset));
+		
+		if (getWakeUpOffset == DateUtils.MINUTE_IN_MILLIS) {
+			return 0;
+		}
+		else if (getWakeUpOffset == 5 * DateUtils.MINUTE_IN_MILLIS) {
+			return 1;
+		}
+		else if (getWakeUpOffset == 10 * DateUtils.MINUTE_IN_MILLIS) {
+			return 2;
+		}
+		else if (getWakeUpOffset == 15 * DateUtils.MINUTE_IN_MILLIS) {
+			return 3;
+		}
+		else if (getWakeUpOffset == 30 * DateUtils.MINUTE_IN_MILLIS) {
+			return 4;
+		}
+		else if (getWakeUpOffset == DateUtils.HOUR_IN_MILLIS) {
+			return 5;
+		}
+		else if (getWakeUpOffset == 2 * DateUtils.HOUR_IN_MILLIS) {
+			return 6;
+		}
+		
+		return 7;
+	}
+	
+	private Alarm getDayAlarm (int id) {
+		
+  		AlarmAdapter adapter;
+
+  		Alarm alarm = new Alarm(id, false, 0, 0, 0);
+	
+  		try {
+			adapter = new AlarmAdapter(this).open();
+		
+			Cursor cursorDAY = adapter.fetchAlarm(id);
+		
+			if (cursorDAY.moveToFirst()) {
+			
+				alarm.setEnabled(cursorDAY.getInt(0) > 0);
+				alarm.setWakeUpOffset(cursorDAY.getLong(1));
+				alarm.setWakeUpTimeout(cursorDAY.getLong(2));
+				alarm.setSleepTime(cursorDAY.getLong(3));
+								
+			}
+		
+			adapter.close();
+		
+  		} catch (Exception ex) {
+  			Log.e("DayAlarm", "AlarmAdapter error: "+ ex.toString());
+  			return null;
+  		}	  
+  
+  		return alarm;
+  
+  }
+	
+
+	@Override
+	 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	      Toast.makeText(parent.getContext(), "The planet is " +
+	          parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+	      
+	      if (this.firstEvent != null) {
+	    	  
+	    	  if (pos == 7)  {// custom
+//	    		  ...
+	    	  	}
+	      	//this.firstEvent.getBeginDate().getTime() -
+	      }
+	    }
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

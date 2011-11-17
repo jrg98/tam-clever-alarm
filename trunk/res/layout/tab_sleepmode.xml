@@ -5,8 +5,10 @@
     android:orientation="horizontal" 
     android:layout_height="fill_parent" 
     android:baselineAligned="true"
+    android:id="@+id/tab_day_background" 
+    android:background="@drawable/tab_day_bg"
     >
-    
+    <ScrollView android:layout_height="wrap_content" android:id="@+id/scrollView1" android:layout_width="match_parent">
     <LinearLayout
 		android:layout_height="fill_parent"
      	android:id="@+id/linearLayout1" 
@@ -75,4 +77,5 @@
         	/>
         	
     </LinearLayout>
+    </ScrollView>
 </LinearLayout>

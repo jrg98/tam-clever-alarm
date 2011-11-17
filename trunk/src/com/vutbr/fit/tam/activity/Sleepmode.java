@@ -1,5 +1,7 @@
 package com.vutbr.fit.tam.activity;
 
+import java.util.Date;
+
 import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.database.AlarmAdapter;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -26,6 +29,7 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 	private RadioButton sleepTimeOff;
 	private TimePicker sleepTime;
 	private Button saveSleepMode;
+	private LinearLayout dayBackground;
 	
 	private int day;
 	private Alarm alarm;
@@ -48,6 +52,14 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
         
         this.actualDay = (TextView) this.findViewById(R.id.tv_day);
         actualDay.setText(days[day]);
+        
+        Date date = new Date();
+        
+        if (date.getDay() == this.day ) {
+        	this.dayBackground = (LinearLayout) this.findViewById(R.id.tab_day_background);
+        	this.dayBackground.setBackgroundResource(R.drawable.tab_today_bg);
+    	}
+
         
     }
     

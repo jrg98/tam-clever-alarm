@@ -29,7 +29,8 @@
         <activity android:name=".activity.DayAlarm" />
         <activity android:name=".activity.DayInfoTab" />
         <activity android:name=".activity.Sleepmode" />
-        <activity android:name=".activity.Day" />  
+        <activity android:name=".activity.Day" />
+        <activity android:name=".activity.TimeformatSettings" />    
         
         <service android:name=".widget.WidgetUpdateServise"></service>
         

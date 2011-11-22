@@ -58,13 +58,9 @@ public class EventsDatabase {
 		e.setBeginDate(to);
 
 		for (Event event : getEvents(from, to, status)) {
-			
-			Log.v("LOOG", event.getTitle());
-			
+						
 			if (event.getBeginDate().compareTo(e.getBeginDate()) <= 0) {
-				
-				Log.v("LOOG", event.getTitle());
-				
+								
 				e.setAllDayEvent(event.isAllDayEvent());
 				e.setBusy(event.isBusy());
 				e.setBeginDate(event.getBeginDate());

@@ -32,6 +32,7 @@ import com.vutbr.fit.tam.calendar.Event;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.AlarmTable;
 import com.vutbr.fit.tam.database.EventsDatabase;
+import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.DaySimpleAdapter;
 import com.vutbr.fit.tam.gui.Days;
 import com.vutbr.fit.tam.nofitication.NotificationHelper;
@@ -69,6 +70,12 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
     	
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.main);
+        
+        
+        
+        
+        
+        
 
         // TODO not sure this is working always as requested, eg. app is in background
         // maybe a service will be better
@@ -138,6 +145,8 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
     	 String alarm = null;
     	 String sleepmode = null;
     	 
+    	 final String timeFormat = this.loadTimeFormat();
+    			     	 
     	 HashMap<String, String> map = new HashMap<String, String>();
     	 map.put(Identifiers.DAY.toString(), this.getString(day));
     	 map.put(Identifiers.TODAY.toString(), String.valueOf(today));
@@ -148,8 +157,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 						
 			if (cursorDAY.moveToFirst()) {
 				
-				final String timeFormat = DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE;
-						
+				
 				if (cursorDAY.getInt(0) > 0) {
 					alarm = DateFormat.format(timeFormat, cursorDAY.getLong(2)).toString();
 				}
@@ -184,6 +192,21 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 
 	}
 	
+    
+    private String loadTimeFormat() {
+    	
+    	SettingsAdapter settingsAdapter = new SettingsAdapter(this);
+    	settingsAdapter.open();
+    	
+    	String format = settingsAdapter.fetchSetting("timeformat", "0");
+    	
+    	if (format == null) {
+    		format = DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE;
+    	}
+        settingsAdapter.close();
+        
+        return format;
+    }
 	
 	/**
 	 * Create list with items

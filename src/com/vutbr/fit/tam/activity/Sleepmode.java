@@ -5,6 +5,7 @@ import java.util.Date;
 import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.database.AlarmAdapter;
+import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.Days;
 
 import android.app.Activity;
@@ -39,7 +40,6 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
         setContentView(R.layout.tab_sleepmode);
         
         this.sleepTime = (TimePicker) this.findViewById(R.id.timeSleep);
-        this.sleepTime.setIs24HourView(true);
         
         this.saveSleepMode = (Button) this.findViewById(R.id.saveSleepMode);
         this.saveSleepMode.setOnClickListener(this);
@@ -72,6 +72,8 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 		this.alarm = this.getDayAlarm(day);
 		this.showAlarm();
 		
+		this.sleepTime.setIs24HourView(is24hoursFormat());
+		
 	}
 	
 	private void setSleepModeIndicatorOn(boolean value) {
@@ -91,6 +93,16 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 		
 	}
 	
+    private boolean is24hoursFormat() {
+    	
+    	SettingsAdapter settingsAdapter = new SettingsAdapter(this);
+    	settingsAdapter.open();
+    	
+    	final int is24hour = Integer.parseInt(settingsAdapter.fetchSetting("is24hour", "0"));
+    	settingsAdapter.close();
+    	
+    	return (is24hour == 0 ? true : false);
+    }
 	
     private Alarm getDayAlarm (int id) {
 		

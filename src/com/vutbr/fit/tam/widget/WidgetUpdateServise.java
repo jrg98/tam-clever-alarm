@@ -19,6 +19,7 @@ import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.calendar.Event;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
+import com.vutbr.fit.tam.database.SettingsAdapter;
 
 public class WidgetUpdateServise extends Service {
 
@@ -34,6 +35,8 @@ public class WidgetUpdateServise extends Service {
 		Event nextEvent = this.getNextEvent();
 		Alarm nextAlarm = this.getNextAlarm();
 		
+		final String timeFormat = this.loadTimeFormat();
+		
 		// Actualize all showed widget
 		if (appWidgetIds.length > 0) {
 			for (int widgetId : appWidgetIds) {
@@ -46,25 +49,23 @@ public class WidgetUpdateServise extends Service {
 					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, nextEvent.getBeginDate().toLocaleString());
 				}
 				else {
-					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, "");
-					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, "");
+					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, "-");
+					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, "-");
 				}
-				
-				final String timeFormat = DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE;
-				
+							
 				// Set info about alarm
 				if (nextAlarm.isEnabled()) {
 					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, DateFormat.format(timeFormat, nextAlarm.getWakeUpTimeout()).toString());
 				} else
 				{
-					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, "");
+					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, "-");
 				}
 
 				// Set info about sleep mode
 				Boolean sleepMode = true; // only for try
 				
 				if (sleepMode) {
-					remoteViews.setTextViewText(R.id.tvWidgetMode, this.getResources().getText(R.string.sleep_mode));
+					remoteViews.setTextViewText(R.id.tvWidgetMode, this.getResources().getText(R.string.sleep));
 				}
 				else {
 					remoteViews.setTextViewText(R.id.tvWidgetMode, "");
@@ -80,6 +81,20 @@ public class WidgetUpdateServise extends Service {
 		super.onStart(intent, startId);
 	}
 	
+    private String loadTimeFormat() {
+ 
+    	SettingsAdapter settingsAdapter = new SettingsAdapter(this);
+    	settingsAdapter.open();
+    	
+    	String format = settingsAdapter.fetchSetting("timeformat", "0");
+    	
+    	if (format == null) {
+    		format = DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE;
+    	}
+        settingsAdapter.close();
+        
+        return format;
+    }
 
 	@Override
 	public IBinder onBind(Intent intent) {

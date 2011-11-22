@@ -66,4 +66,9 @@
 	<string name="advance_set">Time advance has been set!</string>
 	<string name="advance_not_set">Time advance has been set!</string>
     
+    <string name="button_settings_timeformat">Time format</string>
+	<string name="button_settings_timeformat_description">Set format for time</string>
+	<string name="time_format">Time format</string>
+	<string name="sleep">Sleep</string>
+    
 </resources>

@@ -24,11 +24,12 @@
         	 android:layout_gravity="center" 
         	 android:textStyle="bold"
         />
-        <TextView android:textAppearance="?android:attr/textAppearanceMedium"
-     	    android:text="@string/state" 
- 	        android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-          />
+        <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout4">
+            <TextView android:layout_width="wrap_content" android:text="@string/state" android:paddingLeft="15dp" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+ 			<TextView android:textAppearance="?android:attr/textAppearanceMedium" 
+        			  android:text=":" 
+        			  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+        </LinearLayout>
           
           <LinearLayout android:id="@+id/linearLayout2"
          	  android:orientation="vertical" 
@@ -55,13 +56,13 @@
                 />
             </RadioGroup>
         </LinearLayout>
-        
-        <TextView android:textAppearance="?android:attr/textAppearanceMedium" 
-        	android:id="@+id/textView2" 
-        	android:text="@string/time" 
-        	android:layout_width="wrap_content" 
-        	android:layout_height="wrap_content"
-        />
+          <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout3">
+              <TextView android:layout_width="wrap_content" android:text="@string/time" android:paddingLeft="15dp" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/textView2"></TextView>
+              <TextView android:textAppearance="?android:attr/textAppearanceMedium" 
+        				android:text=":" 
+        				android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+          </LinearLayout>
+	    
         <TimePicker android:layout_gravity="center" 
         	android:id="@+id/timeSleep" 
         	android:layout_width="fill_parent" 

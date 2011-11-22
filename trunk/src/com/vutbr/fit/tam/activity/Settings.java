@@ -51,6 +51,14 @@ public class Settings extends Activity implements OnItemClickListener {
 				R.drawable.button_settings_ringtone
 			);
 		
+		this.addListItem(
+				R.string.button_settings_timeformat, 
+				R.string.button_settings_timeformat_description,
+				R.drawable.button_settings_timeformat
+			);
+		
+		
+		
 		this.createList();
 
 	}
@@ -131,6 +139,11 @@ public class Settings extends Activity implements OnItemClickListener {
 		
 		if (this.checkItem(map, R.string.button_settings_ringtones)) {
 	    	Intent intent = new Intent(this, RingtonesSettings.class);
+	    	this.startActivityForResult(intent, 0);
+		}
+		
+		if (this.checkItem(map, R.string.button_settings_timeformat)) {
+	    	Intent intent = new Intent(this, TimeformatSettings.class);
 	    	this.startActivityForResult(intent, 0);
 		}
 	}

@@ -6,6 +6,7 @@ import java.util.Date;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.database.AlarmAdapter;
+import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.Days;
 
 public class DayAlarm extends Activity implements OnClickListener, Days {
@@ -42,7 +44,6 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
         this.setContentView(R.layout.tab_alarm);
 
         this.alarmTime = (TimePicker) this.findViewById(R.id.timeAlarm);
-        this.alarmTime.setIs24HourView(true);
         
         this.alarmOn = (RadioButton) this.findViewById(R.id.alarmOn);
         this.alarmOff = (RadioButton) this.findViewById(R.id.alarmOff);
@@ -74,6 +75,8 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 		
 		this.alarm = this.getDayAlarm(day);
 		this.showAlarm();
+		// update if change settings
+		this.alarmTime.setIs24HourView(is24hoursFormat());
 		
 	}
 	
@@ -92,6 +95,17 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 		alarmTime.setCurrentMinute(minutes);
 		
 	}
+	
+    private boolean is24hoursFormat() {
+    	
+    	SettingsAdapter settingsAdapter = new SettingsAdapter(this);
+    	settingsAdapter.open();
+    	
+    	final int is24hour = Integer.parseInt(settingsAdapter.fetchSetting("is24hour", "0"));
+    	settingsAdapter.close();
+    	
+    	return (is24hour == 0 ? true : false);
+    }
 	
 	private Alarm getDayAlarm (int id) {
 			

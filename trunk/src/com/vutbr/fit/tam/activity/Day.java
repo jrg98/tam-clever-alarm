@@ -266,7 +266,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
   }
 	
 
-	@Override
+	//@Override
 	 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		
 	      Toast.makeText(parent.getContext(), "The planet is " +
@@ -304,7 +304,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	    	  
 	      }
 	    }
-	@Override
+//	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
 		

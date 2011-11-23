@@ -142,7 +142,7 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 	private void showAlarm() {
 		
 		setAlarmIndicatorOn(alarm.isEnabled());
-		setAlarmTimeIndicator(alarm.getWakeUpTimeout() - alarm.getWakeUpOffset());
+		setAlarmTimeIndicator(alarm.getWakeUpTimeout());
 		
 	}
 	
@@ -153,7 +153,7 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 		int hour = this.alarmTime.getCurrentHour();
 		int minutes = this.alarmTime.getCurrentMinute();
 		
-		this.alarm.setWakeUpTimeout(((hour - 1) * 60 + minutes)* 60000);
+		this.alarm.setWakeUpTimeout((hour * 60 + minutes)* 60000);
 		
 		AlarmAdapter adapter;
 		

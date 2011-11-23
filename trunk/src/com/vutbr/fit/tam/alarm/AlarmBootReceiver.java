@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class AlarmBootReceiver extends BroadcastReceiver {
 	
-	private static final int PERIOD=60000;
+	private static final int PERIOD=30000;
 	private static final int DEFAULT_PERIOD=-1;
 	
 

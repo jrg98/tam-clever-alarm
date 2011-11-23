@@ -40,7 +40,7 @@ public class CalendarChecker extends BroadcastReceiver {
 		
 		int dayID = currentDate.getDay();
 		
-		
+		Log.i("Calendar checker", "Checking calendar....");
 		
 		long actAlarm;
 		AlarmAdapter aD;
@@ -55,7 +55,8 @@ public class CalendarChecker extends BroadcastReceiver {
 			e = eD.getFirstEvent(toDay, EventsDatabase.STATUS_AVAILABLE);
 			
 			if (cursorDAY.moveToFirst()) {
-				dbAlarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getInt(1), cursorDAY.getInt(2), cursorDAY.getInt(3));
+				Log.i("Calendar Checker", "Nacital sa den z databaze "+cursorDAY.getLong(2));
+				dbAlarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getLong(1), cursorDAY.getLong(2), cursorDAY.getLong(3));
 				// uprava hodnoty aby zodpovedala pouzitiu
 				dbAlarm.setWakeUpTimeout(alarmRestruct(dbAlarm.getWakeUpTimeout()));
 				
@@ -68,20 +69,26 @@ public class CalendarChecker extends BroadcastReceiver {
 			
 			// ak neni na dnes alarm, zrusime vsetky a koncime
 			if (!dbAlarm.isEnabled()) {
+				Log.i("Calendar Checker", "Na dnes neni alarm aktivovany");
 				cancelAlarm(c);
 				aD.close();
 				return;
 			}
 			
 			// nastavenie hodnoty dayAlarm
-			if (e.getBeginDate().getTime() - dbAlarm.getWakeUpOffset() < dbAlarm.getWakeUpTimeout()) dayAlarm = e.getBeginDate().getTime() - dbAlarm.getWakeUpOffset();
-			else dayAlarm = dbAlarm.getWakeUpTimeout();	
+			if (e != null) {
+				Log.i("Calendar Checker", "Mame event");
+				if (e.getBeginDate().getTime() - dbAlarm.getWakeUpOffset() < dbAlarm.getWakeUpTimeout()) dayAlarm = e.getBeginDate().getTime() - dbAlarm.getWakeUpOffset();
+				else dayAlarm = dbAlarm.getWakeUpTimeout();
+			} else {dayAlarm = dbAlarm.getWakeUpTimeout();Log.i("Calendar Checker", "Nemame event");}
 			
 			// nastavenie actAlarm, ak neexistuje zaznam v tabulke, nastavi sa na dayAlarm a vlozi do db, a nastavi sa nan alarm
 			if (cursorACT.moveToFirst()) {
-				actAlarm = cursorACT.getInt(AlarmColumnIndex);
+				Log.i("Calendar Checker", "Mame zaznam v tabulke o dnesku");
+				actAlarm = cursorACT.getLong(AlarmColumnIndex);
 				alarmActive = cursorACT.getInt(0)>0;
-			} else { 
+			} else {
+				Log.i("Calendar Checker", "Nemame zaznam v tabulke o dnesku");
 				actAlarm = dayAlarm;
 				addNewAlarm(aD, actAlarm, c);
 				setAlarmTime(actAlarm, c);
@@ -90,14 +97,22 @@ public class CalendarChecker extends BroadcastReceiver {
 			
 			// ak je alarm spravne na dnesok a nema byt spusteny, tak rusim vsetky alarmy - nastane ak sa zrusi na widgete
 			if (alarmIsToday(actAlarm) && !alarmActive) {
+				Log.i("Calendar Checker", "nikdy nenastane");
 				cancelAlarm(c);
 				aD.close();
 				return;
 			}
 			
+			Date dll = new Date(dayAlarm);
+			Log.i("Calendar Checker", "Stav alarmov aktualny " + actAlarm + " v DB " + dll.toString() + " momentalny cas " + currentDate.toString());
+			
 			if (actAlarm != dayAlarm) {
+				Log.i("Calendar Checker", "Je treba prestavit alarm");
 				// nastavujeme alarm iba ak este nenastal
-				if (dayAlarm < currentTime) updateExistingAlarm(aD, dayAlarm, c);
+				if (dayAlarm > currentTime) {
+					Log.i("Calendar Checker", "Updatuje sa alarm");
+					updateExistingAlarm(aD, dayAlarm, c);
+				}
 			}
 			
 			aD.close();

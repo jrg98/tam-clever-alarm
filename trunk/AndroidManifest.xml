@@ -33,6 +33,8 @@
         <activity android:name=".activity.TimeformatSettings" />    
         
         <service android:name=".widget.WidgetUpdateServise"></service>
+        <service android:name=".widget.WidgetRefreshService"></service>
+        <receiver android:name=".widget.CleverAlarmWidgetProvider"></receiver>
         
         <receiver android:name=".alarm.AlarmBootReceiver">
       		<intent-filter>

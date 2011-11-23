@@ -7,6 +7,8 @@ import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.alarm.AlarmLauncher;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
+import com.vutbr.fit.tam.widget.CleverAlarmWidgetProvider;
+import com.vutbr.fit.tam.widget.WidgetRefreshService;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -41,6 +43,8 @@ public class CalendarChecker extends BroadcastReceiver {
 		int dayID = currentDate.getDay();
 		
 		Log.i("Calendar checker", "Checking calendar....");
+		
+		c.startService(new Intent(c, WidgetRefreshService.class));
 		
 		long actAlarm;
 		AlarmAdapter aD;

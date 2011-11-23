@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.vutbr.fit.tam.R;
@@ -26,6 +27,12 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		  // Update the widgets via the service
 		  context.startService(intent);
 		  		  
+	  }
+	  
+	  @Override
+	  public void onReceive(Context context, Intent intent) {
+		  super.onReceive(context, intent);
+		  Log.i("CAWidgetProvider", "Prisla sprava.");
 	  }
 
 }

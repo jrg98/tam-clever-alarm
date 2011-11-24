@@ -66,11 +66,8 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	  private void update() {
 	  		  
 		// Receive broadcast but widget is not show
-		if (CleverAlarmWidgetProvider.context == null ||
-		    CleverAlarmWidgetProvider.appWidgetIds == null ||
-			CleverAlarmWidgetProvider.appWidgetManager == null) {	
-			
-				return;
+		if (CleverAlarmWidgetProvider.context == null) {	
+			return;
 		}
 		  
 		Log.v("LOOG", "Widget update..");

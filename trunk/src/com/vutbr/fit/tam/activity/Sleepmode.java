@@ -7,8 +7,10 @@ import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.Days;
+import com.vutbr.fit.tam.widget.WidgetRefreshService;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -178,7 +180,8 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 			Log.e("DayAlarm", "AlarmAdapter error: "+ ex.toString());
 		}
 		
-		
+		// Actualize widget
+		startService(new Intent(this.getApplicationContext(), WidgetRefreshService.class));
 	}
 
 

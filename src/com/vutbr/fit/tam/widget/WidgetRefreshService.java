@@ -17,6 +17,7 @@ public class WidgetRefreshService extends Service {
 		// POZOR !!!!!!!!!!!!! je treba po poslani zrusit servis !!!!!!!!!!!!!!!!!!!!!!!
 		Intent intent=new Intent(getApplicationContext(),CleverAlarmWidgetProvider.class);
 		this.sendBroadcast(intent);
+		stopSelf();
 	}
 
 }

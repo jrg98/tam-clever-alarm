@@ -3,6 +3,8 @@ package com.vutbr.fit.tam.activity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
@@ -12,6 +14,7 @@ import android.graphics.Color;
 
 import android.os.Bundle;
 import android.os.Debug;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +37,7 @@ import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.calendar.Event;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
+import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.DaySimpleAdapter;
 import com.vutbr.fit.tam.gui.Days;
 import com.vutbr.fit.tam.gui.ListViewUtility;
@@ -44,7 +48,11 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 		EVENT, BEGIN, END
 	};
 	
+	final private int timeMinutesAdvance[] = {1, 5, 10, 15, 30, 45};
+	final private int timeHoursAdvance[] = {1, 2, 3, 4, 5, 6, 8, 10, 12, 20};
+	
 	private TextView actualDay;
+	private TextView dayAlarmAdvanceTime;
 	private LinearLayout dayBackground;
 	private Spinner advance;
 	private ListView daysEventListView;
@@ -63,22 +71,28 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 			        
         this.actualDay = (TextView) this.findViewById(R.id.tv_day);
         actualDay.setText(days[this.day]);
+                
+        this.dayAlarmAdvanceTime = (TextView) this.findViewById(R.id.dayAlarmAdvance);
+        this.advance = (Spinner) this.findViewById(R.id.advance);
         
         this.alarm = this.getDayAlarm(this.day);
-        	       
-        initList();
-        loadDayEvents();
         
-        if (this.firstEvent != null) {
-	        this.advance = (Spinner) this.findViewById(R.id.advance);
-	        ArrayAdapter adapter = ArrayAdapter.createFromResource(
-	                this, R.array.advance, android.R.layout.simple_spinner_item);
-	        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	        this.advance.setAdapter(adapter);
+  	    this.initEventList();
+  	    this.loadDayEvents();
+  	    this.createEventList();
+        
+  	  if (this.firstEvent != null) {
+	        
+	        String[] advanceArray = getTimeAdapterArray();
+	        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, advanceArray);
+	        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
+	        
+	        this.advance.setAdapter(spinnerArrayAdapter);
 	        this.advance.setSelection(this.getAdvanceId());
 	        this.advance.setOnItemSelectedListener(this);
-        }
-        
+      }
+
+  	    
         // Set background
         Date date = new Date();
         if (date.getDay() == this.day ) {
@@ -86,8 +100,20 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
         	this.dayBackground.setBackgroundResource(R.drawable.tab_today_bg);
     	}
 
-        createList();
         
+        
+    }
+    
+    @Override
+	protected void onResume() {
+		
+		super.onResume();
+		
+		this.alarm = this.getDayAlarm(this.day);
+		
+    	final String timeFormat = this.loadTimeFormat();
+  	    dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS).toString());
+  	        	
     }
     
     /**
@@ -117,10 +143,10 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
     	
 		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_DONT_CARE)) {
 
-			this.addListItem(event.getTitle(),
-							 event.getBeginDate(),
-							 event.getEndDate()
-							 );
+			this.addListEventItem(event.getTitle(),
+							 	  event.getBeginDate(),
+							      event.getEndDate()
+							    );
 		}
 		
 		this.firstEvent = database.getFirstEvent(from, EventsDatabase.STATUS_DONT_CARE);
@@ -131,13 +157,13 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	/**
 	 * Initialize list
 	 */
-	private void initList () {
+	private void initEventList () {
 		this.daysEventListView = (ListView) findViewById(R.id.dayEventList);
 		this.eventListItems = new ArrayList<HashMap<String, String>>();
 	}
     
 	
-	private void addListItem(String title, Date begin, Date end) {
+	private void addListEventItem(String title, Date begin, Date end) {
 		
     	 HashMap<String, String> map = new HashMap<String, String>();
     	 
@@ -146,14 +172,13 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
     	 map.put(Identifiers.END.toString(), end.toString()) ;	    	 
     	 this.eventListItems.add(map);
     	 
-    	 
 	}
 	
     /**
 	 * Create list with items
 	 * Must call initList at first
 	 */
-	private void createList () {
+	private void createEventList () {
 		SimpleAdapter adapter = new SimpleAdapter(
 				this.getBaseContext(),
 				this.eventListItems, 
@@ -176,36 +201,57 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	}
 	
 	
+	private String[] getTimeAdapterArray() {
+		
+		String[] timeArray = new String[this.timeMinutesAdvance.length + this.timeHoursAdvance.length];
+		
+		// If plural nouns - 's' on the end of words
+		int start = 0;
+		
+		if (this.timeMinutesAdvance[start] == 1) {
+			timeArray[start] = String.valueOf(this.timeMinutesAdvance[start]) + " " + getResources().getText(R.string.minute);
+			start++;
+		}
+		
+		for (int i = start; i < this.timeMinutesAdvance.length; i++) {
+			timeArray[i] = String.valueOf(this.timeMinutesAdvance[i]) + " " + getResources().getText(R.string.minutes);
+		}
+		
+		start = 0;
+		if (this.timeHoursAdvance[start] == 1) {
+			timeArray[start + this.timeMinutesAdvance.length] = String.valueOf(this.timeHoursAdvance[start]) + " " + getResources().getText(R.string.hour);
+			start++;
+		}
+		
+		for (int i = start; i <this.timeHoursAdvance.length; i++) {
+			timeArray[i + this.timeMinutesAdvance.length] = String.valueOf(this.timeHoursAdvance[i]) + " " + getResources().getText(R.string.hours);
+		}
+		
+		
+		return timeArray;
+	}
+	
 	/*
-	 * Return index of spinner which depends on alarm time
+	 * Return index of spinner which depends on offsettime
 	 */
 	private int getAdvanceId() {
 		
-		long getWakeUpOffset = this.alarm.getWakeUpOffset();
+		long wakeUpOffset = this.alarm.getWakeUpOffset();
 				
-		if (getWakeUpOffset == DateUtils.MINUTE_IN_MILLIS) {
-			return 0;
-		}
-		else if (getWakeUpOffset == 5 * DateUtils.MINUTE_IN_MILLIS) {
-			return 1;
-		}
-		else if (getWakeUpOffset == 10 * DateUtils.MINUTE_IN_MILLIS) {
-			return 2;
-		}
-		else if (getWakeUpOffset == 15 * DateUtils.MINUTE_IN_MILLIS) {
-			return 3;
-		}
-		else if (getWakeUpOffset == 30 * DateUtils.MINUTE_IN_MILLIS) {
-			return 4;
-		}
-		else if (getWakeUpOffset == DateUtils.HOUR_IN_MILLIS) {
-			return 5;
-		}
-		else if (getWakeUpOffset == 2 * DateUtils.HOUR_IN_MILLIS) {
-			return 6;
+		for (int i = 0; i < this.timeMinutesAdvance.length; i++) {
+			if (wakeUpOffset == timeMinutesAdvance[i] * DateUtils.MINUTE_IN_MILLIS) {
+				return i;
+			}
 		}
 		
-		return 7;
+		for (int i = 0; i < this.timeHoursAdvance.length; i++) {
+			if (wakeUpOffset == timeHoursAdvance[i] * DateUtils.HOUR_IN_MILLIS) {
+				return i + timeMinutesAdvance.length;
+			}
+		}
+		
+		return 0;
+	
 	}
 	
 	/*
@@ -213,24 +259,17 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	 */
 	private long getWakeUpOffsetFromAdvanceId(int index) {
 		
-		switch (index) {
-			case 0:
-				return DateUtils.MINUTE_IN_MILLIS;
-			case 1:
-				return 5 * DateUtils.MINUTE_IN_MILLIS;
-			case 2:
-				return 10 * DateUtils.MINUTE_IN_MILLIS;
-			case 3:
-				return 15 * DateUtils.MINUTE_IN_MILLIS;
-			case 4:
-				return 30 * DateUtils.MINUTE_IN_MILLIS;
-			case 5:
-				return DateUtils.HOUR_IN_MILLIS;
-			case 6:
-				return 2 * DateUtils.HOUR_IN_MILLIS;
-			default:
-				return 0;
-		}
+		 int[] advanceArray = this.timeMinutesAdvance;
+		 long millis = DateUtils.MINUTE_IN_MILLIS;
+		 
+		 if (index >= this.timeMinutesAdvance.length) {
+    		 index = index - this.timeMinutesAdvance.length;
+    		 advanceArray = this.timeHoursAdvance;
+    		 millis = DateUtils.HOUR_IN_MILLIS;
+    	  } 
+		
+		 
+		return advanceArray[index] * millis; 
 
 	}
 	
@@ -266,19 +305,43 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
   }
 	
 
+	private String loadTimeFormat() {
+    	
+    	SettingsAdapter settingsAdapter = new SettingsAdapter(this);
+    	settingsAdapter.open();
+    	
+    	String format = settingsAdapter.fetchSetting("timeformat",
+    						DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE);
+    	    	
+        settingsAdapter.close();
+        
+        return format;
+    }
+	
 	//@Override
 	 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		
-	      Toast.makeText(parent.getContext(), "The planet is " +
-	          parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
-	      
+		 
 	      if (this.firstEvent != null) {
-
-	    	  if (pos < 7) {
-	    		  long advance = this.getWakeUpOffsetFromAdvanceId(pos);
-	    		  this.alarm.setWakeUpOffset(advance);
-	    	  }
+	    	  long advance = this.getWakeUpOffsetFromAdvanceId(pos);
+	    	  this.alarm.setWakeUpOffset(advance);
 	    	  
+	    	  Toast.makeText(parent.getContext(), "The planet is " +
+			          parent.getItemAtPosition(pos).toString()+ "--" + String.valueOf(advance), Toast.LENGTH_LONG).show();
+			
+	    	  final String timeFormat = this.loadTimeFormat();
+	    	  final long alarmWithAdvance = this.firstEvent.getBeginDate().getTime() - advance;
+	    	  
+	    	  // Kontrola zda nezasahuje do predchoziho dne..
+	    	  
+	    	  
+	    	  dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarmWithAdvance).toString());
+	    	  
+	      }
+	    	  
+	      
+	      
+	      	// Save
 	    	  AlarmAdapter adapter;
 	    	  
 	    	  try {
@@ -302,7 +365,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	  			Log.e("TimeAdvance", "AlarmAdapter error: "+ ex.toString());
 	  		}
 	    	  
-	      }
+	      
 	    }
 //	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {

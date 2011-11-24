@@ -72,11 +72,6 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
         this.setContentView(R.layout.main);
         
         
-        
-        
-        
-        
-
         // TODO not sure this is working always as requested, eg. app is in background
         // maybe a service will be better
         this.registerCalendarChangeObserver();
@@ -159,10 +154,11 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 				
 				
 				if (cursorDAY.getInt(0) > 0) {
-					alarm = DateFormat.format(timeFormat, cursorDAY.getLong(2)).toString();
+					alarm = DateFormat.format(timeFormat, cursorDAY.getLong(2) - DateUtils.HOUR_IN_MILLIS).toString();
+					Log.v("TAAG",String.valueOf(cursorDAY.getLong(2)));
 				}
 				
-				sleepmode = DateFormat.format(timeFormat, cursorDAY.getLong(3)).toString();	
+				sleepmode = DateFormat.format(timeFormat, cursorDAY.getLong(3) - DateUtils.HOUR_IN_MILLIS).toString();	
 
 			}
 			
@@ -199,9 +195,15 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
     	settingsAdapter.open();
     	
     	String format = settingsAdapter.fetchSetting("timeformat", "0");
-    	
-    	if (format == null) {
+    	    	
+    	// Defaultni format
+    	if (format == "0") {
+    		
     		format = DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE;
+    		
+    		if (!settingsAdapter.updateSetting("timeformat", format))
+    	        	settingsAdapter.insertSetting("timeformat",  format);
+    
     	}
         settingsAdapter.close();
         

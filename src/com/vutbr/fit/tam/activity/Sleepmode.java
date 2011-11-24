@@ -11,6 +11,7 @@ import com.vutbr.fit.tam.gui.Days;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,7 +87,7 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 		
 		value /= 60000;
 		int minutes = (int) value % 60;
-		int hours = (int) ((value - minutes) / 60) + 1;
+		int hours = (int) (value - minutes) / 60;
 		
 		sleepTime.setCurrentHour(hours);
 		sleepTime.setCurrentMinute(minutes);
@@ -139,7 +140,7 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 	private void showAlarm() {
 		
 		this.setSleepModeIndicatorOn(alarm.isEnabled());
-		this.setSleepModeTimeIndicator(alarm.getWakeUpTimeout());
+		this.setSleepModeTimeIndicator(alarm.getSleepTime());
 		
 	}
 	
@@ -150,7 +151,7 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 		int hour = this.sleepTime.getCurrentHour();
 		int minutes = this.sleepTime.getCurrentMinute();
 		
-		this.alarm.setSleepTime(((hour - 1) * 60 + minutes)* 60000);
+		this.alarm.setSleepTime((hour * 60 + minutes)* 60000);
 		
 		AlarmAdapter adapter;
 		

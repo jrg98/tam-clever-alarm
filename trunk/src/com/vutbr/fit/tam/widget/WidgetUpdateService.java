@@ -21,13 +21,15 @@ import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
 import com.vutbr.fit.tam.database.SettingsAdapter;
 
-public class WidgetUpdateServise extends Service {
+public class WidgetUpdateService extends Service {
 
 		
 	@Override
 	public void onStart(Intent intent, int startId) {
 
-				
+				Log.v("LOOG", "KLIKK");
+		
+		/*
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
 
 		int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
@@ -62,22 +64,15 @@ public class WidgetUpdateServise extends Service {
 				}
 
 				// Set info about sleep mode
-				Boolean sleepMode = true; // only for try
+				Boolean sleepMode = true; // TODO: load status from db
+				this.sleepmMode(sleepMode, remoteViews);
 				
-				if (sleepMode) {
-					remoteViews.setTextViewText(R.id.tvWidgetMode, this.getResources().getText(R.string.sleep));
-				}
-				else {
-					remoteViews.setTextViewText(R.id.tvWidgetMode, "");
-				}
-				
-				remoteViews.setImageViewBitmap(R.id.switchButton, this.getButtonImage(sleepMode));
-								
 				appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
 			}
 			stopSelf();
 		}
+		*/
 		super.onStart(intent, startId);
 	}
 	
@@ -102,6 +97,25 @@ public class WidgetUpdateServise extends Service {
 		return null;
 	}
 	
+	
+	/**
+	 * Set sleepMode GUI
+	 * 
+	 * @param sleepmode - true/false
+	 * @param remoteViews
+	 */
+	private void sleepmMode(boolean sleepmode, RemoteViews remoteViews) {
+		
+		if (sleepmode) {
+			remoteViews.setTextViewText(R.id.tvWidgetMode, this.getResources().getText(R.string.sleep));
+		}
+		else {
+			remoteViews.setTextViewText(R.id.tvWidgetMode, "");
+		}
+		
+		remoteViews.setImageViewBitmap(R.id.switchButton, this.getButtonImage(sleepmode));
+		
+	}
 	
 	// Only for try, change icon at widget
 	public Bitmap getButtonImage (boolean sleepMode) {

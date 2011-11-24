@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,10 +87,12 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 	}
 	
 	private void setAlarmTimeIndicator(long value) {
+			
+		Log.v("LOOG", String.valueOf(value));
 		
 		value /= 60000;
 		int minutes = (int) value % 60;
-		int hours = (int) ((value - minutes) / 60) + 1;
+		int hours = (int) ((value - minutes) / 60);
 		
 		alarmTime.setCurrentHour(hours);
 		alarmTime.setCurrentMinute(minutes);
@@ -143,7 +146,7 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 		
 		setAlarmIndicatorOn(alarm.isEnabled());
 		setAlarmTimeIndicator(alarm.getWakeUpTimeout());
-		
+
 	}
 	
 	public void saveAlarm() {
@@ -154,6 +157,8 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 		int minutes = this.alarmTime.getCurrentMinute();
 		
 		this.alarm.setWakeUpTimeout((hour * 60 + minutes)* 60000);
+		
+		Log.v("LOOG", "Ulozim" + String.valueOf(alarm.getWakeUpTimeout()));
 		
 		AlarmAdapter adapter;
 		

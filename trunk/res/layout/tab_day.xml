@@ -9,6 +9,12 @@
   <ScrollView android:layout_height="wrap_content" android:id="@+id/scrollView1" android:layout_width="match_parent">
     <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout3" android:orientation="vertical" android:layout_height="305dp">
         <TextView android:id="@+id/tv_day" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:text="day" android:layout_gravity="center" android:textStyle="bold" android:layout_width="wrap_content"></TextView>
+        
+   <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:paddingLeft="15dp" android:paddingRight="15dp" android:paddingTop="15dp">
+      <TextView android:text="@string/alarm" android:layout_width="wrap_content" android:textSize="18dip" android:layout_height="match_parent" android:layout_gravity="center_horizontal" android:paddingTop="10dp" android:textColor="@android:color/white"/>
+      <TextView android:text=":" android:layout_width="wrap_content" android:textSize="18dip" android:paddingTop="10dp" android:layout_height="match_parent" android:textColor="@android:color/white"/>
+      <TextView android:id="@+id/dayAlarmAdvance" android:layout_width="wrap_content" android:textSize="18dip" android:paddingTop="10dp" android:layout_height="match_parent" android:textColor="@android:color/white" android:paddingLeft="15dip"/>
+  </LinearLayout> 
     
   <LinearLayout android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_width="match_parent" android:paddingLeft="15dp" android:paddingRight="15dp" android:paddingTop="15dp">
       <TextView android:text="@string/advance" android:layout_width="wrap_content" android:textSize="18dip" android:layout_height="match_parent" android:layout_gravity="center_horizontal" android:paddingTop="10dp" android:textColor="@android:color/white"/>

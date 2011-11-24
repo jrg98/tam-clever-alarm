@@ -70,5 +70,9 @@
 	<string name="button_settings_timeformat_description">Set format for time</string>
 	<string name="time_format">Time format</string>
 	<string name="sleep">Sleep</string>
+    <string name="minute">minute</string>
+    <string name="minutes">minutes</string>
+    <string name="hour">hour</string>
+    <string name="hours">hours</string>
     
 </resources>

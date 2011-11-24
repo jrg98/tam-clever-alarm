@@ -25,9 +25,9 @@ import com.vutbr.fit.tam.database.SettingsAdapter;
 
 public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		
-	  private Context context;
-	  private AppWidgetManager appWidgetManager;
-	  private int[] appWidgetIds; 
+	  private static Context context;
+	  private static AppWidgetManager appWidgetManager;
+	  private static int[] appWidgetIds; 
 	
 	  @Override
 	  public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -40,42 +40,43 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		  remoteViews.setOnClickPendingIntent(R.id.switchButton, pendingIntent);
 
 		  appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
-
+		  
+		  // Static access
+		  CleverAlarmWidgetProvider.context = context;
+		  CleverAlarmWidgetProvider.appWidgetManager = appWidgetManager;
+		  CleverAlarmWidgetProvider.appWidgetIds = appWidgetIds;
+		  
 		  this.update();
 		  
-		  this.context = context;
-		  this.appWidgetManager = appWidgetManager;
-		  this.appWidgetIds = appWidgetIds;
-		  
-		  Log.v("LOOG", "Widget on update");
-		  
-		  // Update the widgets via the service
-		  //context.startService(intent);
+		  Log.v("Widget", "Widget on update");
+
 		  		  
 	  }
 	  
 	  @Override
 	  public void onReceive(Context context, Intent intent) {
 		  
-		  Log.i("CAWidgetProvider", "Prisla sprava.");
-		  Toast.makeText(context, "onReceiver()", Toast.LENGTH_LONG).show();
+		  Log.v("Widget", "Widget on receive");
 		  this.update();
 		  super.onReceive(context, intent);
 		
 	  }
 
-
-		//int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		
 	  private void update() {
-	  
-		if (this.context == null) {
-			Log.v("LOOG", "WIdget neni context");
-			return;
+	  		  
+		// Receive broadcast but widget is not show
+		if (CleverAlarmWidgetProvider.context == null ||
+		    CleverAlarmWidgetProvider.appWidgetIds == null ||
+			CleverAlarmWidgetProvider.appWidgetManager == null) {	
+			
+				return;
 		}
 		  
-		Event nextEvent = this.getNextEvent(this.context);
-		Alarm nextAlarm = this.getNextAlarm(this.context);
+		Log.v("LOOG", "Widget update..");
+		
+		Event nextEvent = this.getNextEvent(CleverAlarmWidgetProvider.context);
+		Alarm nextAlarm = this.getTodayAlarm(CleverAlarmWidgetProvider.context);
 		
 		final String timeFormat = this.loadTimeFormat(context);
 		
@@ -97,38 +98,55 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 							
 				// Set info about alarm
 				if (nextAlarm.isEnabled()) {
-					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, DateFormat.format(timeFormat, nextAlarm.getWakeUpTimeout()).toString());
+					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, DateFormat.format(timeFormat,
+												nextAlarm.getWakeUpTimeout() -
+												DateUtils.HOUR_IN_MILLIS).toString());
 				} else
 				{
 					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, "-");
 				}
 
 				// Set info about sleep mode
-				Boolean sleepMode = true; // TODO: load status from db
+				Boolean sleepMode = isSleepMode(CleverAlarmWidgetProvider.context); // TODO: load status from db
 				this.sleepmMode(sleepMode, remoteViews, context);
 
 				appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
 			}
-		//	stopSelf();
 		}
-		//super.onStart(intent, startId);
 	}
 	
-  private String loadTimeFormat(Context context) {
+	  /**
+	   * Load time format settings from database
+	   * @param context
+	   * @return
+	   */
+	  private String loadTimeFormat(Context context) {
 
-  	SettingsAdapter settingsAdapter = new SettingsAdapter(context);
-  	settingsAdapter.open();
+		  SettingsAdapter settingsAdapter = new SettingsAdapter(context);
+		  settingsAdapter.open();
   	
-  	String format = settingsAdapter.fetchSetting("timeformat", DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE);
-    settingsAdapter.close();
+		  String format = settingsAdapter.fetchSetting("timeformat", DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE);
+		  settingsAdapter.close();
       
-    return format;
-  }
+		  return format;
+	  }
 
+		private boolean isSleepMode(Context context) {
+			
+	    	SettingsAdapter settingsAdapter = new SettingsAdapter(context);
+	    	settingsAdapter.open();
+	    	
+	    	final String sleepmode = settingsAdapter.fetchSetting("sleepmode", "false");
+	    	settingsAdapter.close();
+	    	
+	    	return sleepmode.startsWith("true");
+			
+		}
+	  
 	
 	/**
-	 * Set sleepMode GUI
+	 * Set sleepMode in GUI
 	 * 
 	 * @param sleepmode - true/false
 	 * @param remoteViews
@@ -156,56 +174,62 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 
 	}
 	
-	
-	private Alarm getNextAlarm(Context context) {
+	/**
+	 * Log
+	 * @param context
+	 * @return today alarm
+	 */
+	private Alarm getTodayAlarm(Context context) {
 					
-	  		AlarmAdapter adapter;
+		AlarmAdapter adapter;
 
-	  		Date date = new Date();
-	  		final int id = date.getDay();
-	  		// id = (id + 1) % 7 ????????
-	  		
-	  		Alarm alarm = new Alarm(id, false, 0, 0, 0);
+	  	Date date = new Date();
+	  	final int id = date.getDay();
+	  		  		
+	  	Alarm alarm = new Alarm(id, false, 0, 0, 0);
 		
-	  		try {
-				adapter = new AlarmAdapter(context).open();
+	  	try {
+	  		adapter = new AlarmAdapter(context).open();
 			
-				Cursor cursorDAY = adapter.fetchAlarm(id);
+			Cursor cursorDAY = adapter.fetchAlarm(id);
 			
-				if (cursorDAY.moveToFirst()) {
+			if (cursorDAY.moveToFirst()) {
 				
-					alarm.setEnabled(cursorDAY.getInt(0) > 0);
-					alarm.setWakeUpOffset(cursorDAY.getLong(1));
-					alarm.setWakeUpTimeout(cursorDAY.getLong(2));
-					alarm.setSleepTime(cursorDAY.getLong(3));
+				alarm.setEnabled(cursorDAY.getInt(0) > 0);
+				alarm.setWakeUpOffset(cursorDAY.getLong(1));
+				alarm.setWakeUpTimeout(cursorDAY.getLong(2));
+				alarm.setSleepTime(cursorDAY.getLong(3));
 									
-				}
+			}
 			
 			adapter.close();
 			
-	  		} catch (Exception ex) {
-	  			Log.e("DayAlarm", "AlarmAdapter error: "+ ex.toString());
-	  			return null;
-	  		}	  
+	  	} catch (Exception ex) {
+	  		Log.e("DayAlarm", "AlarmAdapter error: "+ ex.toString());
+	  		return null;
+	  	}	  
 	  
-	  		return alarm;
+		return alarm;
 	  		
 	}
 	
-	// Get next event
+	/**
+	 * Load next event
+	 * @param context
+	 * @return
+	 */
 	private Event getNextEvent(Context context) {
 		
 		EventsDatabase database = new EventsDatabase(context);
   			
-  	Date from = new Date();
-  	from.setTime(from.getTime() - DateUtils.DAY_IN_MILLIS);
-  	Date to = new Date();
-  	to.setTime(to.getTime() + DateUtils.DAY_IN_MILLIS);
-  	    	
+	  	Date from = new Date();
+	  	from.setTime(from.getTime());
+	  	Date to = new Date();
+	  	to.setTime(to.getTime() + 7 * DateUtils.DAY_IN_MILLIS);
+	  	    	
+	  	// Load next event
 		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_DONT_CARE)) {
-
 			return event;
-									
 		}
 		
 		return null;

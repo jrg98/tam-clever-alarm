@@ -36,6 +36,7 @@ import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.DaySimpleAdapter;
 import com.vutbr.fit.tam.gui.Days;
 import com.vutbr.fit.tam.nofitication.NotificationHelper;
+import com.vutbr.fit.tam.widget.WidgetRefreshService;
 import com.vutbr.fit.tam.alarm.Alarm;
 
 
@@ -280,7 +281,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 
 	//@Override
 	public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-
+		
 		Intent intent = new Intent(this, DayInfoTab.class);
 		intent.putExtra("day", position);
 		this.startActivityForResult(intent, 0);

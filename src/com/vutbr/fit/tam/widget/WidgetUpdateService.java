@@ -2,6 +2,7 @@ package com.vutbr.fit.tam.widget;
 
 import java.util.Date;
 
+import android.R.bool;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -23,73 +24,34 @@ import com.vutbr.fit.tam.database.SettingsAdapter;
 
 public class WidgetUpdateService extends Service {
 
-		
 	@Override
 	public void onStart(Intent intent, int startId) {
 
-				Log.v("LOOG", "KLIKK");
-		
-		/*
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
 
 		int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		
-		Event nextEvent = this.getNextEvent();
-		Alarm nextAlarm = this.getNextAlarm();
-		
-		final String timeFormat = this.loadTimeFormat();
-		
+		//load info about sleep mod form db
+		Boolean sleepMode = isSleepMode(); 
+				
 		// Actualize all showed widget
 		if (appWidgetIds.length > 0) {
 			for (int widgetId : appWidgetIds) {
 
 				RemoteViews remoteViews = new RemoteViews(getPackageName(),R.layout.widget);
 				
-				// Set info about next event
-				if (nextEvent != null) {
-					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, nextEvent.getTitle());
-					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, nextEvent.getBeginDate().toLocaleString());
-				}
-				else {
-					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, "-");
-					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, "-");
-				}
-							
-				// Set info about alarm
-				if (nextAlarm.isEnabled()) {
-					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, DateFormat.format(timeFormat, nextAlarm.getWakeUpTimeout()).toString());
-				} else
-				{
-					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, "-");
-				}
-
-				// Set info about sleep mode
-				Boolean sleepMode = true; // TODO: load status from db
-				this.sleepmMode(sleepMode, remoteViews);
-				
+				// Set info about sleep mode - reverse state
+				this.sleepMode(!sleepMode, remoteViews);
 				appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
 			}
-			stopSelf();
+			
 		}
-		*/
+		
+		stopSelf();
 		super.onStart(intent, startId);
 	}
 	
-    private String loadTimeFormat() {
- 
-    	SettingsAdapter settingsAdapter = new SettingsAdapter(this);
-    	settingsAdapter.open();
-    	
-    	String format = settingsAdapter.fetchSetting("timeformat", "0");
-    	
-    	if (format == null) {
-    		format = DateFormat.HOUR_OF_DAY + ":" + DateFormat.MINUTE + DateFormat.MINUTE;
-    	}
-        settingsAdapter.close();
-        
-        return format;
-    }
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -97,14 +59,30 @@ public class WidgetUpdateService extends Service {
 		return null;
 	}
 	
+	/**
+	 * Load info about sleepmode from db
+	 * @return
+	 */
+	private boolean isSleepMode() {
+		
+    	SettingsAdapter settingsAdapter = new SettingsAdapter(this);
+    	settingsAdapter.open();
+    	
+    	final String sleepmode = settingsAdapter.fetchSetting("sleepmode", "false");
+    	settingsAdapter.close();
+    	
+    	return sleepmode.startsWith("true");
+		
+	}
 	
+
 	/**
 	 * Set sleepMode GUI
 	 * 
 	 * @param sleepmode - true/false
 	 * @param remoteViews
 	 */
-	private void sleepmMode(boolean sleepmode, RemoteViews remoteViews) {
+	private void sleepMode(boolean sleepmode, RemoteViews remoteViews) {
 		
 		if (sleepmode) {
 			remoteViews.setTextViewText(R.id.tvWidgetMode, this.getResources().getText(R.string.sleep));
@@ -114,10 +92,25 @@ public class WidgetUpdateService extends Service {
 		}
 		
 		remoteViews.setImageViewBitmap(R.id.switchButton, this.getButtonImage(sleepmode));
+			
+		// Save info about sleepmode to db
+		SettingsAdapter settingsAdapter = new SettingsAdapter(getApplicationContext()); 
+		
+		settingsAdapter.open();
+	    
+		if (!settingsAdapter.updateSetting("sleepmode", String.valueOf(sleepmode)))
+	       	settingsAdapter.insertSetting("sleepmode", String.valueOf(sleepmode));
+		
+	    settingsAdapter.close();
+		
 		
 	}
 	
-	// Only for try, change icon at widget
+	/**
+	 * 	Load image for widget button
+	 * @param sleepMode
+	 * @return Bitmap image loaded from resource
+	 */
 	public Bitmap getButtonImage (boolean sleepMode) {
 		
 		Bitmap theImage = BitmapFactory.decodeResource(getResources() ,
@@ -127,60 +120,5 @@ public class WidgetUpdateService extends Service {
 
 	}
 	
-	
-	private Alarm getNextAlarm() {
-					
-	  		AlarmAdapter adapter;
-
-	  		Date date = new Date();
-	  		final int id = date.getDay();
-	  		// id = (id + 1) % 7 ????????
-	  		
-	  		Alarm alarm = new Alarm(id, false, 0, 0, 0);
-		
-	  		try {
-				adapter = new AlarmAdapter(this).open();
-			
-				Cursor cursorDAY = adapter.fetchAlarm(id);
-			
-				if (cursorDAY.moveToFirst()) {
-				
-					alarm.setEnabled(cursorDAY.getInt(0) > 0);
-					alarm.setWakeUpOffset(cursorDAY.getLong(1));
-					alarm.setWakeUpTimeout(cursorDAY.getLong(2));
-					alarm.setSleepTime(cursorDAY.getLong(3));
-									
-				}
-			
-			adapter.close();
-			
-	  		} catch (Exception ex) {
-	  			Log.e("DayAlarm", "AlarmAdapter error: "+ ex.toString());
-	  			return null;
-	  		}	  
-	  
-	  		return alarm;
-	  		
-	}
-	
-	// Get next event
-	private Event getNextEvent() {
-		
-		EventsDatabase database = new EventsDatabase(this);
-    			
-    	Date from = new Date();
-    	from.setTime(from.getTime() - DateUtils.DAY_IN_MILLIS);
-    	Date to = new Date();
-    	to.setTime(to.getTime() + DateUtils.DAY_IN_MILLIS);
-    	    	
-		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_DONT_CARE)) {
-
-			return event;
-									
-		}
-		
-		return null;
-		
-	}
 
 }

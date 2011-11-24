@@ -4,6 +4,7 @@ package com.vutbr.fit.tam.activity;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -24,6 +25,7 @@ import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.Days;
+import com.vutbr.fit.tam.widget.WidgetRefreshService;
 
 public class DayAlarm extends Activity implements OnClickListener, Days {
 
@@ -182,6 +184,9 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 		} catch (Exception ex) {
 			Log.e("DayAlarm", "AlarmAdapter error: "+ ex.toString());
 		}
+		
+		// Actualize widget
+		startService(new Intent(this.getApplicationContext(), WidgetRefreshService.class));
 		
 		
 	}

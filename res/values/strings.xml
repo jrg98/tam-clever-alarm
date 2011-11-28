@@ -74,5 +74,10 @@
     <string name="minutes">minutes</string>
     <string name="hour">hour</string>
     <string name="hours">hours</string>
+    <string name="button_settings_sleepmode">Sleepmode</string>
+    <string name="button_settings_sleepmode_description">Ringer mode in sleepmode</string>
+    <string name="settings_ringmode">Ringing in sleepmode:</string>
+    <string name="silent">Silent</string>
+    <string name="vibrate">Vibrate</string>
     
 </resources>

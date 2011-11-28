@@ -57,6 +57,12 @@ public class Settings extends Activity implements OnItemClickListener {
 				R.drawable.button_settings_timeformat
 			);
 		
+		this.addListItem(
+				R.string.button_settings_sleepmode, 
+				R.string.button_settings_sleepmode_description,
+				R.drawable.button_settings_sleepmode
+			);
+		
 		
 		
 		this.createList();
@@ -144,6 +150,11 @@ public class Settings extends Activity implements OnItemClickListener {
 		
 		if (this.checkItem(map, R.string.button_settings_timeformat)) {
 	    	Intent intent = new Intent(this, TimeformatSettings.class);
+	    	this.startActivityForResult(intent, 0);
+		}
+		
+		if (this.checkItem(map, R.string.button_settings_sleepmode)) {
+	    	Intent intent = new Intent(this, SleepmodeSettings.class);
 	    	this.startActivityForResult(intent, 0);
 		}
 	}

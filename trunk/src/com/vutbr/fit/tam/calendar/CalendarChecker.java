@@ -82,6 +82,7 @@ public class CalendarChecker extends BroadcastReceiver {
 			if (!dbAlarm.isEnabled()) {
 				Log.i("Calendar Checker", "Na dnes neni alarm aktivovany");
 				cancelAlarm(c);
+				cancelSleep(c);
 				aD.close();
 				return;
 			}

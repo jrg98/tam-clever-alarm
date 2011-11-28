@@ -119,17 +119,20 @@ public class CalendarChecker extends BroadcastReceiver {
 			}
 			
 			Date dll = new Date(dayAlarm);
-			Log.i("Calendar Checker", "Stav alarmov aktualny " + actAlarm + " v DB " + dll.toString() + " momentalny cas " + currentDate.toString());
+			Log.i("Calendar Checker", "Stav alarmov aktualny " + new Date(actAlarm).toString() + " v DB " + dll.toString() + " momentalny cas " + currentDate.toString());
+			Log.i("Calendar Checker", "Stav sleepov aktualny " + new Date(actSleep).toString() + " v DB " + new Date(daySleep).toString());
 			
 			// moyna moye robit problemy, ale skorej nie
 			if (actSleep != daySleep) {
+				Log.i("Calendar Checker", "Je treba prestavit sleep " + new Date(daySleep).toString());
 				if (daySleep > currentTime) {
+					Log.i("Calendar Checker", "Updatuje sa sleep");
 					updateExistingSleep(aD, dayAlarm, daySleep, c);
 				}
 			}
 			
 			if (actAlarm != dayAlarm) {
-				Log.i("Calendar Checker", "Je treba prestavit alarm");
+				Log.i("Calendar Checker", "Je treba prestavit alarm " + new Date(dayAlarm).toString());
 				// nastavujeme alarm iba ak este nenastal
 				if (dayAlarm > currentTime) {
 					Log.i("Calendar Checker", "Updatuje sa alarm");

@@ -93,11 +93,13 @@ public class AlarmBootReceiver extends BroadcastReceiver {
 					actSleep = cursorACT.getLong(2);
 				
 					// nastavi alarm iba ak este nenastal ked bol device vypnuty, inak by ho odpalilo hned
-					AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
-					Intent i=new Intent(c, SleepLauncher.class);
-					PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
+					if (actSleep > System.currentTimeMillis()) {
+						AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+						Intent i=new Intent(c, SleepLauncher.class);
+						PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
 			    
-					mgr.set(AlarmManager.RTC_WAKEUP, actSleep, pi);
+						mgr.set(AlarmManager.RTC_WAKEUP, actSleep, pi);
+					}
 				}
 			
 			aD.close();

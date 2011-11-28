@@ -69,6 +69,7 @@ public class CalendarChecker extends BroadcastReceiver {
 				dbAlarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getLong(1), cursorDAY.getLong(2), cursorDAY.getLong(3));
 				// uprava hodnoty aby zodpovedala pouzitiu
 				dbAlarm.setWakeUpTimeout(alarmRestruct(dbAlarm.getWakeUpTimeout()));
+				dbAlarm.setSleepTime(alarmRestruct(dbAlarm.getSleepTime()));
 				
 			} else {
 				// ak nie je ziadny obsah v tabulke pre dany den, nic sa nedeje

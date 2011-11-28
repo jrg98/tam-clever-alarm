@@ -83,21 +83,21 @@ public class AlarmBootReceiver extends BroadcastReceiver {
 	
 	private void setSleepTime(Context c) {
 		AlarmAdapter aD;
-		long actAlarm;
+		long actSleep;
 		try {
 			aD = new AlarmAdapter(c).open();
 			Cursor cursorACT = aD.fetchAlarm(new Date(System.currentTimeMillis()).getDay());
 			 
 				if (cursorACT.moveToFirst()) {
 					// ak mame nejaky zaznam alarmu, tak zistime ci je potrebne alarm updatovat
-					actAlarm = cursorACT.getLong(3);
+					actSleep = cursorACT.getLong(2);
 				
 					// nastavi alarm iba ak este nenastal ked bol device vypnuty, inak by ho odpalilo hned
 					AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
 					Intent i=new Intent(c, SleepLauncher.class);
 					PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
 			    
-					mgr.set(AlarmManager.RTC_WAKEUP, actAlarm, pi);
+					mgr.set(AlarmManager.RTC_WAKEUP, actSleep, pi);
 				}
 			
 			aD.close();

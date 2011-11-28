@@ -113,6 +113,7 @@ public class CalendarChecker extends BroadcastReceiver {
 			if (alarmIsToday(actAlarm) && !alarmActive) {
 				Log.i("Calendar Checker", "nikdy nenastane");
 				cancelAlarm(c);
+				cancelSleep(c);
 				aD.close();
 				return;
 			}
@@ -185,6 +186,13 @@ public class CalendarChecker extends BroadcastReceiver {
 	private void cancelAlarm(Context c) {
 		AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
 		Intent i=new Intent(c, AlarmLauncher.class);
+	    PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
+	    mgr.cancel(pi);
+	}
+	
+	private void cancelSleep(Context c) {
+		AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+		Intent i=new Intent(c, SleepLauncher.class);
 	    PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
 	    mgr.cancel(pi);
 	}

@@ -7,6 +7,7 @@ import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.alarm.AlarmLauncher;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
+import com.vutbr.fit.tam.sleep.SleepLauncher;
 import com.vutbr.fit.tam.widget.CleverAlarmWidgetProvider;
 import com.vutbr.fit.tam.widget.WidgetRefreshService;
 
@@ -28,6 +29,7 @@ public class CalendarChecker extends BroadcastReceiver {
 	private boolean alarmActive;
 	
 	private int AlarmColumnIndex = 3;
+	private int SleepColumnIndex = 2;
 
 	
 	@Override
@@ -46,10 +48,14 @@ public class CalendarChecker extends BroadcastReceiver {
 		
 		c.startService(new Intent(c, WidgetRefreshService.class));
 		
-		long actAlarm;
 		AlarmAdapter aD;
 		Alarm dbAlarm;
+		
+		long actAlarm;
 		long dayAlarm;
+		
+		long actSleep;
+		long daySleep;
 		
 		try {
 			aD = new AlarmAdapter(c).open();
@@ -79,6 +85,8 @@ public class CalendarChecker extends BroadcastReceiver {
 				return;
 			}
 			
+			daySleep = dbAlarm.getSleepTime();
+			
 			// nastavenie hodnoty dayAlarm
 			if (e != null) {
 				Log.i("Calendar Checker", "Mame event");
@@ -90,11 +98,13 @@ public class CalendarChecker extends BroadcastReceiver {
 			if (cursorACT.moveToFirst()) {
 				Log.i("Calendar Checker", "Mame zaznam v tabulke o dnesku");
 				actAlarm = cursorACT.getLong(AlarmColumnIndex);
+				actSleep = cursorACT.getLong(SleepColumnIndex);
 				alarmActive = cursorACT.getInt(0)>0;
 			} else {
 				Log.i("Calendar Checker", "Nemame zaznam v tabulke o dnesku");
 				actAlarm = dayAlarm;
-				addNewAlarm(aD, actAlarm, c);
+				actSleep = daySleep;
+				addNewAlarm(aD, actAlarm, actSleep, c);
 				setAlarmTime(actAlarm, c);
 				alarmActive = true;
 			}
@@ -110,12 +120,19 @@ public class CalendarChecker extends BroadcastReceiver {
 			Date dll = new Date(dayAlarm);
 			Log.i("Calendar Checker", "Stav alarmov aktualny " + actAlarm + " v DB " + dll.toString() + " momentalny cas " + currentDate.toString());
 			
+			// moyna moye robit problemy, ale skorej nie
+			if (actSleep != daySleep) {
+				if (daySleep > currentTime) {
+					updateExistingSleep(aD, dayAlarm, daySleep, c);
+				}
+			}
+			
 			if (actAlarm != dayAlarm) {
 				Log.i("Calendar Checker", "Je treba prestavit alarm");
 				// nastavujeme alarm iba ak este nenastal
 				if (dayAlarm > currentTime) {
 					Log.i("Calendar Checker", "Updatuje sa alarm");
-					updateExistingAlarm(aD, dayAlarm, c);
+					updateExistingAlarm(aD, dayAlarm, daySleep, c);
 				}
 			}
 			
@@ -137,14 +154,20 @@ public class CalendarChecker extends BroadcastReceiver {
 	}
 	
 	// updatene alarm v databazi a zaroven nastavi dany alarm na spustenie
-	public void updateExistingAlarm(AlarmAdapter aD, long atime, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, atime);
+	public void updateExistingAlarm(AlarmAdapter aD, long atime,long stime, Context c) {
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
 		aD.updateAlarm(a);
 		if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
 	}
 	
-	public void addNewAlarm(AlarmAdapter aD, long atime, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, 0, atime);
+	public void updateExistingSleep(AlarmAdapter aD, long atime, long stime, Context c) {
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
+		aD.updateAlarm(a);
+		if (a.getSleepTime() > currentTime) setSleepTime(a.getSleepTime(), c);
+	}
+	
+	public void addNewAlarm(AlarmAdapter aD, long atime, long stime, Context c) {
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
 		aD.insertAlarm(a);
 		if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
 
@@ -175,6 +198,14 @@ public class CalendarChecker extends BroadcastReceiver {
 		Date d = new Date(a);
 		if (d.getDay() == currentDate.getDay()) return true;
 		else return false;
+	}
+	
+	private void setSleepTime(long millis, Context c) {
+		AlarmManager mgr=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+		Intent i=new Intent(c, SleepLauncher.class);
+	    PendingIntent pi=PendingIntent.getBroadcast(c, 0, i, 0);
+	    
+	    mgr.set(AlarmManager.RTC_WAKEUP, millis, pi);
 	}
 	
 	// Sets variable lastDay to Sunday of the current week, at 23:59:XX

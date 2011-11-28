@@ -158,13 +158,13 @@ public class CalendarChecker extends BroadcastReceiver {
 	public void updateExistingAlarm(AlarmAdapter aD, long atime,long stime, Context c) {
 		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
 		aD.updateAlarm(a);
-		if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
+		if (atime > currentTime) setAlarmTime(atime, c);
 	}
 	
 	public void updateExistingSleep(AlarmAdapter aD, long atime, long stime, Context c) {
 		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
 		aD.updateAlarm(a);
-		if (a.getSleepTime() > currentTime) setSleepTime(a.getSleepTime(), c);
+		if (stime > currentTime) setSleepTime(stime, c);
 	}
 	
 	public void addNewAlarm(AlarmAdapter aD, long atime, long stime, Context c) {

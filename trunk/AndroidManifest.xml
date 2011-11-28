@@ -46,6 +46,7 @@
     	<receiver android:name=".sleep.SleepLauncher"></receiver>
     	<activity android:name=".activity.RingtonesSettings"></activity>
     	<activity android:name=".activity.Ringing"></activity>
+    	<activity android:name=".activity.SleepmodeSettings"></activity>
 
     </application>
     

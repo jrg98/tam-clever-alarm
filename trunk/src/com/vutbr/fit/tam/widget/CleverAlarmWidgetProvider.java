@@ -86,7 +86,9 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 				// Set info about next event
 				if (nextEvent != null) {
 					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, nextEvent.getTitle());
-					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, nextEvent.getBeginDate().toLocaleString());
+					String nEventStr = nextEvent.getBeginDate().toLocaleString();
+					nEventStr = nEventStr.substring(0, nEventStr.length() - 3);
+					remoteViews.setTextViewText(R.id.tvWidgetNextEventDate, nEventStr);
 				}
 				else {
 					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, "-");

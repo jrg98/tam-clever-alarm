@@ -111,14 +111,6 @@ public class CalendarChecker extends BroadcastReceiver {
 				alarmActive = true;
 			}
 			
-			// ak je alarm spravne na dnesok a nema byt spusteny, tak rusim vsetky alarmy - nastane ak sa zrusi na widgete
-			if (alarmIsToday(actAlarm) && !alarmActive) {
-				Log.i("Calendar Checker", "nikdy nenastane");
-				cancelAlarm(c);
-				cancelSleep(c);
-				aD.close();
-				return;
-			}
 			
 			Date dll = new Date(dayAlarm);
 			Log.i("Calendar Checker", "Stav alarmov aktualny " + new Date(actAlarm).toString() + " v DB " + dll.toString() + " momentalny cas " + currentDate.toString());

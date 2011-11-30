@@ -286,7 +286,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 		
   		AlarmAdapter adapter;
 
-  		Alarm alarm = new Alarm(id, false, 0, 0, 0);
+  		Alarm alarm = new Alarm(id, false, 0, 0, 0, false);
 	
   		try {
 			adapter = new AlarmAdapter(this).open();
@@ -299,6 +299,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 				alarm.setWakeUpOffset(cursorDAY.getLong(1));
 				alarm.setWakeUpTimeout(cursorDAY.getLong(2));
 				alarm.setSleepTime(cursorDAY.getLong(3));
+				alarm.setSleepEnabled(cursorDAY.getInt(4) > 0);
 								
 			}
 		

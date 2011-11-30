@@ -14,15 +14,18 @@ public class Alarm {
 	
 	private boolean enabled;
 	
+	private boolean sleepEnabled;
+	
 	private long wakeUpOffset;
 	
 	private long wakeUpTimeout;
 	
 	private long  sleepTime;
 	
-	public Alarm(int id, boolean enabled, long wakeUpOffset, long wakeUpTimeout, long sleepTime) {
+	public Alarm(int id, boolean enabled, long wakeUpOffset, long wakeUpTimeout, long sleepTime, boolean sleepEnabled) {
 		this.id = id;
 		this.enabled = enabled;
+		this.sleepEnabled = sleepEnabled;
 		this.wakeUpOffset = wakeUpOffset;
 		this.wakeUpTimeout = wakeUpTimeout;
 		this.sleepTime = sleepTime;
@@ -34,6 +37,10 @@ public class Alarm {
 	
 	public boolean isEnabled() {
 		return this.enabled;
+	}
+	
+	public boolean isSleepEnabled() {
+		return this.sleepEnabled;
 	}
 	
 	public long getWakeUpOffset()  {
@@ -50,6 +57,10 @@ public class Alarm {
 	
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+	
+	public void setSleepEnabled(boolean enabled) {
+		this.sleepEnabled = enabled;
 	}
 	
 	public void setWakeUpOffset(long offset) {

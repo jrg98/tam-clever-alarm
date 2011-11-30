@@ -44,7 +44,6 @@ public class CalendarDatabase {
 		this.context = context;
 		
         this.calendarAdapter = new CalendarAdapter(this.context);
-        this.calendarAdapter.open();
 	}
 	
 	private String getCalendarURI() {
@@ -61,7 +60,7 @@ public class CalendarDatabase {
 	 * @return Set of calendars
 	 */
 	public Set<Calendar> loadCalendars () {
-		
+		this.calendarAdapter.open();
 		HashMap<String, Calendar> calendarsMap = new HashMap<String, Calendar>();
 		Set<Calendar> calendarsSet = new HashSet<Calendar>();
 		
@@ -113,6 +112,7 @@ public class CalendarDatabase {
 		for (String key : calendarsMap.keySet()) {
 			calendarsSet.add(calendarsMap.get(key));
 		}
+		this.calendarAdapter.close();
 		
 		return calendarsSet;
 	}
@@ -122,22 +122,13 @@ public class CalendarDatabase {
 	 * @param calendars
 	 */
 	public void saveCalendars(Set<Calendar> calendars) {
+		this.calendarAdapter.open();
 		this.calendarAdapter.deleteCalendars();
     	
     	for (Calendar calendar : calendars) {
     		this.calendarAdapter.insertCalendar(calendar);
     	}
-	}
-	
-	/**
-	 * Close connection with database
-	 */
-	protected void finalize () {
-		if (this.calendarAdapter != null) {
-			this.calendarAdapter.close();
-		}
-	}
-	
-	
+    	this.calendarAdapter.close();
+	}	
 	
 }

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * 
@@ -78,7 +80,8 @@ public class AlarmAdapter {
 						AlarmTable.KEY_ENABLED, 
 						AlarmTable.KEY_WAKEUP_OFFSET,
 						AlarmTable.KEY_WAKEUP_TIMEOUT,
-						AlarmTable.KEY_SLEEP_TIME
+						AlarmTable.KEY_SLEEP_TIME,
+						AlarmTable.KEY_SLEEP_ENABLED
 					}, 
 					null, 
 					null, 
@@ -100,7 +103,8 @@ public class AlarmAdapter {
 					AlarmTable.KEY_ENABLED, 
 					AlarmTable.KEY_WAKEUP_OFFSET,
 					AlarmTable.KEY_WAKEUP_TIMEOUT,
-					AlarmTable.KEY_SLEEP_TIME
+					AlarmTable.KEY_SLEEP_TIME,
+					AlarmTable.KEY_SLEEP_ENABLED
 				},
 				AlarmTable.KEY_ALARM_ID + "=" + id,
 				null, 
@@ -124,6 +128,7 @@ public class AlarmAdapter {
 		values.put(AlarmTable.KEY_WAKEUP_OFFSET, alarm.getWakeUpOffset());
 		values.put(AlarmTable.KEY_WAKEUP_TIMEOUT, alarm.getWakeUpTimeout());
 		values.put(AlarmTable.KEY_SLEEP_TIME, alarm.getSleepTime());
+		values.put(AlarmTable.KEY_SLEEP_ENABLED, alarm.isSleepEnabled());		
 		return values;
 	}	
 }

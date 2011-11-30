@@ -185,7 +185,7 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	  	Date date = new Date();
 	  	final int id = date.getDay();
 	  		  		
-	  	Alarm alarm = new Alarm(id, false, 0, 0, 0);
+	  	Alarm alarm = new Alarm(id, false, 0, 0, 0, false);
 		
 	  	try {
 	  		adapter = new AlarmAdapter(context).open();
@@ -198,6 +198,7 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 				alarm.setWakeUpOffset(cursorDAY.getLong(1));
 				alarm.setWakeUpTimeout(cursorDAY.getLong(2));
 				alarm.setSleepTime(cursorDAY.getLong(3));
+				alarm.setSleepEnabled(cursorDAY.getInt(4) > 0);
 									
 			}
 			

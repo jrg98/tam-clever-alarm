@@ -65,7 +65,7 @@ public class CalendarChecker extends BroadcastReceiver {
 			e = eD.getFirstEvent(toDay, EventsDatabase.STATUS_AVAILABLE);
 			
 			if (cursorDAY.moveToFirst()) {
-				Log.i("Calendar Checker", "Nacital sa den z databaze "+cursorDAY.getLong(2));
+				Log.i("Calendar Checker", "Nacital sa den z databaze "+dayID);
 				dbAlarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getLong(1), cursorDAY.getLong(2), cursorDAY.getLong(3), cursorDAY.getInt(4)>0);
 				// uprava hodnoty aby zodpovedala pouzitiu
 				dbAlarm.setWakeUpTimeout(alarmRestruct(dbAlarm.getWakeUpTimeout()));
@@ -74,15 +74,6 @@ public class CalendarChecker extends BroadcastReceiver {
 			} else {
 				// ak nie je ziadny obsah v tabulke pre dany den, nic sa nedeje
 				Log.e("CalendarChecker", "Empty DB.");
-				aD.close();
-				return;
-			}
-			
-			// ak neni na dnes alarm, zrusime vsetky a koncime
-			if (!dbAlarm.isEnabled()) {
-				Log.i("Calendar Checker", "Na dnes neni alarm aktivovany");
-				cancelAlarm(c);
-				cancelSleep(c);
 				aD.close();
 				return;
 			}
@@ -111,28 +102,41 @@ public class CalendarChecker extends BroadcastReceiver {
 				alarmActive = true;
 			}
 			
-			
 			Date dll = new Date(dayAlarm);
 			Log.i("Calendar Checker", "Stav alarmov aktualny " + new Date(actAlarm).toString() + " v DB " + dll.toString() + " momentalny cas " + currentDate.toString());
 			Log.i("Calendar Checker", "Stav sleepov aktualny " + new Date(actSleep).toString() + " v DB " + new Date(daySleep).toString());
 			
 			// moyna moye robit problemy, ale skorej nie
-			if (actSleep != daySleep) {
-				Log.i("Calendar Checker", "Je treba prestavit sleep " + new Date(daySleep).toString());
-				if (daySleep > currentTime) {
-					Log.i("Calendar Checker", "Updatuje sa sleep");
-					updateExistingSleep(aD, dayAlarm, daySleep, c);
+			if (!dbAlarm.isSleepEnabled()) {
+				Log.i("Calendar Checker", "Na dnes neni sleep aktivovany");
+				cancelSleep(c);
+			} else {
+				if (actSleep != daySleep) {
+					Log.i("Calendar Checker", "Je treba prestavit sleep " + new Date(daySleep).toString());
+					if (daySleep > currentTime) {
+						Log.i("Calendar Checker", "Updatuje sa sleep");
+						updateExistingSleep(aD, dayAlarm, daySleep, c);
+					}
 				}
 			}
 			
-			if (actAlarm != dayAlarm) {
-				Log.i("Calendar Checker", "Je treba prestavit alarm " + new Date(dayAlarm).toString());
-				// nastavujeme alarm iba ak este nenastal
-				if (dayAlarm > currentTime) {
-					Log.i("Calendar Checker", "Updatuje sa alarm");
-					updateExistingAlarm(aD, dayAlarm, daySleep, c);
+			// ak neni na dnes alarm, zrusime vsetky a koncime
+			if (!dbAlarm.isEnabled()) {
+				Log.i("Calendar Checker", "Na dnes neni alarm aktivovany");
+				cancelAlarm(c);
+			} else {
+				// TODO pridat notifikaciu ak udalost nastala v minulosti
+				if (actAlarm != dayAlarm) {
+					Log.i("Calendar Checker", "Je treba prestavit alarm " + new Date(dayAlarm).toString());
+					// nastavujeme alarm iba ak este nenastal
+					if (dayAlarm > currentTime) {
+						Log.i("Calendar Checker", "Updatuje sa alarm");
+						updateExistingAlarm(aD, dayAlarm, daySleep, c);
+					}
 				}
 			}
+				
+			
 			
 			aD.close();
 			
@@ -155,21 +159,21 @@ public class CalendarChecker extends BroadcastReceiver {
 	public void updateExistingAlarm(AlarmAdapter aD, long atime,long stime, Context c) {
 		// ????? stime a atime nemali by byt opacne?
 		// TODO
-		//Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
-		//aD.updateAlarm(a);
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime, true);
+		aD.updateAlarm(a);
 		if (atime > currentTime) setAlarmTime(atime, c);
 	}
 	
 	public void updateExistingSleep(AlarmAdapter aD, long atime, long stime, Context c) {
-		//Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
-		//aD.updateAlarm(a);
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime, true);
+		aD.updateAlarm(a);
 		if (stime > currentTime) setSleepTime(stime, c);
 	}
 	
 	public void addNewAlarm(AlarmAdapter aD, long atime, long stime, Context c) {
-		//Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
-		//aD.insertAlarm(a);
-		//if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
+		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime, true);
+		aD.insertAlarm(a);
+		if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
 
 	}
 	

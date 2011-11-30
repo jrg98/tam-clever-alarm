@@ -6,13 +6,17 @@ import java.util.Date;
 import java.util.HashMap;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -27,6 +31,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.vutbr.fit.tam.R;
+import com.vutbr.fit.tam.calendar.CalendarChecker;
 import com.vutbr.fit.tam.calendar.ChangeObserver;
 import com.vutbr.fit.tam.calendar.Event;
 import com.vutbr.fit.tam.database.AlarmAdapter;
@@ -71,6 +76,8 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
     	
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.main);
+        
+        this.checkFirstLaunch();
         
         /*
         // TODO not sure this is working always as requested, eg. app is in background
@@ -288,6 +295,33 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 		intent.putExtra("day", position);
 		this.startActivityForResult(intent, 0);
 					
+	}
+	
+	private void checkFirstLaunch() {
+		SettingsAdapter ad = new SettingsAdapter(this);
+		String result;
+		
+		try {
+			ad.open();
+			result = ad.fetchSetting("FIRST_LAUNCH", "true");
+			
+			if (result.equals("true")) {
+				ad.insertSetting("FIRST_LAUNCH", "false");
+				Log.i("FirstLaunch", "nastal");
+				AlarmManager mgr=(AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+				Intent i=new Intent(this, CalendarChecker.class);
+			    PendingIntent pi=PendingIntent.getBroadcast(this, 0, i, 0);
+			    
+			    mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+		                SystemClock.elapsedRealtime()+60000,
+		                30000,
+		                pi);
+			}
+			
+			ad.close();
+		} catch (Exception e) {
+			Log.e("SettingsAdapter", "Failed to load data from DB.");
+		} 
 	}
 	    
 }

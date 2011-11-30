@@ -112,8 +112,17 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 		this.alarm = this.getDayAlarm(this.day);
 		
     	final String timeFormat = this.loadTimeFormat();
-  	    dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS).toString());
-  	        	
+  	    
+  	    long alarmWithAdvance = alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS;
+  	    
+	    if (this.firstEvent != null) {
+	    	alarmWithAdvance = this.firstEvent.getBeginDate().getTime() - alarm.getWakeUpOffset();
+	    }
+  	    
+  	    dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarmWithAdvance).toString());
+  	    
+
+  	    
     }
     
     /**
@@ -326,8 +335,8 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	    	  long advance = this.getWakeUpOffsetFromAdvanceId(pos);
 	    	  this.alarm.setWakeUpOffset(advance);
 	    	  
-	    	  Toast.makeText(parent.getContext(), "The planet is " +
-			          parent.getItemAtPosition(pos).toString()+ "--" + String.valueOf(advance), Toast.LENGTH_LONG).show();
+	    	 // Toast.makeText(parent.getContext(), "The planet is " +
+			   //       parent.getItemAtPosition(pos).toString()+ "--" + String.valueOf(advance), Toast.LENGTH_LONG).show();
 			
 	    	  final String timeFormat = this.loadTimeFormat();
 	    	  final long alarmWithAdvance = this.firstEvent.getBeginDate().getTime() - advance;
@@ -367,6 +376,13 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	    	  
 	      
 	    }
+	 
+	public void setDayAlarmAdvanceTime() {
+		
+		
+		
+	}
+	 
 //	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub

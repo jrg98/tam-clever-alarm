@@ -64,7 +64,8 @@ public class SleepmodeSettings extends Activity {
         } else {
         	radioSilent.setChecked(false);
         	radioVibrate.setChecked(true);
-        } 
+        }
+        this.settingsAdapter.close();
 	}
 	
 	private void save() {

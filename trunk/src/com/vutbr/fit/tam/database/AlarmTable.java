@@ -32,6 +32,13 @@ public class AlarmTable {
 	 * the day specified by _id
 	 */
 	protected static final String KEY_ENABLED = "enabled";
+	
+	/**
+	 * Column name sleep enabled represents if sleep mode is enabled for
+	 * the day specified by _id
+	 */
+	protected static final String KEY_SLEEP_ENABLED = "sleep_enabled";
+	
 	/**
 	 * Column wakeup_offset represent minutes as sooner the
 	 * alarms wakes you up before the first event current day
@@ -58,7 +65,8 @@ public class AlarmTable {
 		"	" + KEY_ENABLED + " bool not null, " +
 		"	" + KEY_WAKEUP_OFFSET + " unsigned big int not null," +
 		"	" + KEY_WAKEUP_TIMEOUT + " unsigned big int not null," +
-		"	" + KEY_SLEEP_TIME + " unsigned big int not null" +
+		"	" + KEY_SLEEP_TIME + " unsigned big int not null," +
+		"	" + KEY_SLEEP_ENABLED + " bool not null " +
 		");";
 
 	

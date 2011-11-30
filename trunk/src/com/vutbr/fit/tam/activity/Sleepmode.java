@@ -111,7 +111,7 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 		
   		AlarmAdapter adapter;
 
-  		Alarm alarm = new Alarm(id, false, 0, 0, 0);
+  		Alarm alarm = new Alarm(id, false, 0, 0, 0, false);
 	
   		try {
 			adapter = new AlarmAdapter(this).open();
@@ -124,6 +124,7 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 				alarm.setWakeUpOffset(cursorDAY.getLong(1));
 				alarm.setWakeUpTimeout(cursorDAY.getLong(2));
 				alarm.setSleepTime(cursorDAY.getLong(3));
+				alarm.setSleepEnabled(cursorDAY.getInt(4) > 0);
 								
 			}
 		
@@ -141,14 +142,14 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 	
 	private void showAlarm() {
 		
-		this.setSleepModeIndicatorOn(alarm.isEnabled());
+		this.setSleepModeIndicatorOn(alarm.isSleepEnabled());
 		this.setSleepModeTimeIndicator(alarm.getSleepTime());
 		
 	}
 	
 	public void saveAlarm() {
 		
-		this.alarm.setEnabled(this.sleepTimeOn.isChecked());
+		this.alarm.setSleepEnabled(this.sleepTimeOn.isChecked());
 		
 		int hour = this.sleepTime.getCurrentHour();
 		int minutes = this.sleepTime.getCurrentMinute();
@@ -168,7 +169,7 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 			
 			adapter.close();
 			
-			if (this.alarm.isEnabled()) {
+			if (this.alarm.isSleepEnabled()) {
 				Toast.makeText(this, this.getResources().getString(R.string.sleepmode_set), Toast.LENGTH_SHORT).show();
 			} else {
 				Toast.makeText(this, this.getResources().getString(R.string.sleepmode_not_set), Toast.LENGTH_SHORT).show();

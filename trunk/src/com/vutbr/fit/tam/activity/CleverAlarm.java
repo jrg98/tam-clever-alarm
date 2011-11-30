@@ -72,7 +72,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.main);
         
-        
+        /*
         // TODO not sure this is working always as requested, eg. app is in background
         // maybe a service will be better
         this.registerCalendarChangeObserver();
@@ -84,7 +84,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
         		R.string.app_name, 
         		R.string.notification_example, 
         		NotificationHelper.TYPE_APPLICATION);
-
+		*/
     }
     
     /**
@@ -159,7 +159,9 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 					Log.v("TAAG",String.valueOf(cursorDAY.getLong(2)));
 				}
 				
-				sleepmode = DateFormat.format(timeFormat, cursorDAY.getLong(3) - DateUtils.HOUR_IN_MILLIS).toString();	
+				if (cursorDAY.getInt(4) > 0) {
+					sleepmode = DateFormat.format(timeFormat, cursorDAY.getLong(3) - DateUtils.HOUR_IN_MILLIS).toString();
+				}
 
 			}
 			
@@ -181,7 +183,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 		} catch (Exception ex) {
 			// mozna hlaska o zlyhani nacitania DB
 			Log.e("CalendarChecker", "AlarmAdapter error: "+ ex.toString());
-			Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
+			//Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
 			return;
 		} finally {
 			this.daysListItems.add(map);

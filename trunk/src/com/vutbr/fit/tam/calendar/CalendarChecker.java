@@ -66,7 +66,7 @@ public class CalendarChecker extends BroadcastReceiver {
 			
 			if (cursorDAY.moveToFirst()) {
 				Log.i("Calendar Checker", "Nacital sa den z databaze "+cursorDAY.getLong(2));
-				dbAlarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getLong(1), cursorDAY.getLong(2), cursorDAY.getLong(3));
+				dbAlarm = new Alarm(dayID, cursorDAY.getInt(0)>0, cursorDAY.getLong(1), cursorDAY.getLong(2), cursorDAY.getLong(3), cursorDAY.getInt(4)>0);
 				// uprava hodnoty aby zodpovedala pouzitiu
 				dbAlarm.setWakeUpTimeout(alarmRestruct(dbAlarm.getWakeUpTimeout()));
 				dbAlarm.setSleepTime(alarmRestruct(dbAlarm.getSleepTime()));
@@ -161,21 +161,23 @@ public class CalendarChecker extends BroadcastReceiver {
 	
 	// updatene alarm v databazi a zaroven nastavi dany alarm na spustenie
 	public void updateExistingAlarm(AlarmAdapter aD, long atime,long stime, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
-		aD.updateAlarm(a);
+		// ????? stime a atime nemali by byt opacne?
+		// TODO
+		//Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
+		//aD.updateAlarm(a);
 		if (atime > currentTime) setAlarmTime(atime, c);
 	}
 	
 	public void updateExistingSleep(AlarmAdapter aD, long atime, long stime, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
-		aD.updateAlarm(a);
+		//Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
+		//aD.updateAlarm(a);
 		if (stime > currentTime) setSleepTime(stime, c);
 	}
 	
 	public void addNewAlarm(AlarmAdapter aD, long atime, long stime, Context c) {
-		Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
-		aD.insertAlarm(a);
-		if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
+		//Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, stime, atime);
+		//aD.insertAlarm(a);
+		//if (a.getSleepTime() > currentTime) setAlarmTime(a.getSleepTime(), c);
 
 	}
 	

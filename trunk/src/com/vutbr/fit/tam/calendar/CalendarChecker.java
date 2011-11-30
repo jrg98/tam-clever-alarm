@@ -3,10 +3,12 @@ package com.vutbr.fit.tam.calendar;
 import java.util.Date;
 import java.util.Set;
 
+import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.alarm.AlarmLauncher;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
+import com.vutbr.fit.tam.nofitication.NotificationHelper;
 import com.vutbr.fit.tam.sleep.SleepLauncher;
 import com.vutbr.fit.tam.widget.CleverAlarmWidgetProvider;
 import com.vutbr.fit.tam.widget.WidgetRefreshService;
@@ -125,13 +127,18 @@ public class CalendarChecker extends BroadcastReceiver {
 				Log.i("Calendar Checker", "Na dnes neni alarm aktivovany");
 				cancelAlarm(c);
 			} else {
-				// TODO pridat notifikaciu ak udalost nastala v minulosti
 				if (actAlarm != dayAlarm) {
 					Log.i("Calendar Checker", "Je treba prestavit alarm " + new Date(dayAlarm).toString());
 					// nastavujeme alarm iba ak este nenastal
 					if (dayAlarm > currentTime) {
 						Log.i("Calendar Checker", "Updatuje sa alarm");
 						updateExistingAlarm(aD, dayAlarm, daySleep, c);
+					} else {
+						NotificationHelper h = new NotificationHelper(c);
+						h.show(
+				        		R.string.app_name, 
+				        		R.string.alarm_missed, 
+				        		NotificationHelper.TYPE_APPLICATION);
 					}
 				}
 			}
@@ -143,7 +150,6 @@ public class CalendarChecker extends BroadcastReceiver {
 		} catch (Exception ex) {
 			// mozna hlaska o zlyhani nacitania DB
 			Log.e("CalendarChecker", "AlarmAdapter error: "+ex.toString());
-			Toast.makeText(c, ex.toString(), Toast.LENGTH_LONG);
 			return;
 		}
 		

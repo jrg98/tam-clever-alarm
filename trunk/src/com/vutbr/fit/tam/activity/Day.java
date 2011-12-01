@@ -4,39 +4,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.graphics.Color;
-
-
 import android.os.Bundle;
-import android.os.Debug;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
-
 
 import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.alarm.Alarm;
@@ -44,9 +33,8 @@ import com.vutbr.fit.tam.calendar.Event;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
 import com.vutbr.fit.tam.database.SettingsAdapter;
-import com.vutbr.fit.tam.gui.DaySimpleAdapter;
 import com.vutbr.fit.tam.gui.Days;
-import com.vutbr.fit.tam.gui.ListViewUtility;
+
 
 public class Day extends Activity implements Days, OnItemSelectedListener {
 
@@ -87,21 +75,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
         
         this.alarm = this.getDayAlarm(this.day);
         
-  	    this.initEventList();
-  	    this.loadDayEvents();
-  	    this.createEventList();
-        
-  	  if (this.firstEvent != null) {
-	        
-	        String[] advanceArray = getTimeAdapterArray();
-	        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, advanceArray);
-	        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
-	        
-	        this.advance.setAdapter(spinnerArrayAdapter);
-	        this.advance.setSelection(this.getAdvanceId());
-	        this.advance.setOnItemSelectedListener(this);
-      }
-
+  	  
   	    
         // Set background
         Date date = new Date();
@@ -123,14 +97,32 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 		
     	final String timeFormat = this.loadTimeFormat();
   	    
-  	    long alarmWithAdvance = alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS;
-  	    
+    	  this.initEventList();
+    	    this.loadDayEvents();
+    	    this.createEventList();
+          
+    	  if (this.firstEvent != null) {
+  	        
+  	        String[] advanceArray = getTimeAdapterArray();
+  	        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, advanceArray);
+  	        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
+  	        
+  	        this.advance.setAdapter(spinnerArrayAdapter);
+  	        this.advance.setSelection(this.getAdvanceId());
+  	        this.advance.setOnItemSelectedListener(this);
+        }
+
+    	
+    	
 	    if (this.firstEvent != null) {
-	    	alarmWithAdvance = this.firstEvent.getBeginDate().getTime() - alarm.getWakeUpOffset();
+	    	final long advance = alarm.getWakeUpOffset();
+	    	this.setDayAlarmAdvanceTime(advance);
 	    }
-  	    
-  	    dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarmWithAdvance).toString());
-  	    
+	    else {
+	    	final long alarmWithAdvance = alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS;
+	    	dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarmWithAdvance).toString());
+	    }
+	    
   	  //ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView1);
   	 
   	    if (flag) {
@@ -243,7 +235,14 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 			);
 		
 			this.daysEventListView.setAdapter(adapter);
-			ListViewUtility.setListViewHeightBasedOnChildren(daysEventListView);
+			
+			final int height = 60;
+			
+			ViewGroup.LayoutParams params = daysEventListView.getLayoutParams();
+			
+	        params.height = this.eventListItems.size() * height;
+	        daysEventListView.setLayoutParams(params);
+	        daysEventListView.requestLayout();
 			
 	}
 	
@@ -374,19 +373,12 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	    	  long advance = this.getWakeUpOffsetFromAdvanceId(pos);
 	    	  this.alarm.setWakeUpOffset(advance);
 	    	
-	    	  final String timeFormat = this.loadTimeFormat();
-	    	  final long alarmWithAdvance = this.firstEvent.getBeginDate().getTime() - advance;
-	    	  
-	    	  // Kontrola zda nezasahuje do predchoziho dne..
-	    	  
-	    	  
+	    	  this.setDayAlarmAdvanceTime(advance);
 	    	 
-	    		//  dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarmWithAdvance).toString());
-	    	  
-	    	  
+	    	  // Kontrola zda nezasahuje do predchoziho dne..//TODO:
+	    	 
 	      }
 	    	  
-	      
 	      
 	      	// Save
 	    	  AlarmAdapter adapter;
@@ -401,12 +393,13 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	  			
 	  			adapter.close();
 	  			
+	  			/*
 	  			if (this.alarm.isEnabled()) {
 	  				Toast.makeText(this, this.getResources().getString(R.string.advance_set), Toast.LENGTH_SHORT).show();
 	  			} else {
 	  				Toast.makeText(this, this.getResources().getString(R.string.advance_not_set), Toast.LENGTH_SHORT).show();
 	  			}
-	  			
+	  			*/
 	  			
 	  		} catch (Exception ex) {
 	  			Log.e("TimeAdvance", "AlarmAdapter error: "+ ex.toString());
@@ -415,9 +408,32 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	      
 	    }
 	 
-	public void setDayAlarmAdvanceTime() {
+	public void setDayAlarmAdvanceTime(long advance) {
 		
+		final String timeFormat = this.loadTimeFormat();
+		String alarmStr = this.getResources().getString(R.string.alarm_not_set);
 		
+	    long eventAlarm = Long.MAX_VALUE;
+		
+		if (this.firstEvent != null) {
+			alarmStr = DateFormat.format(timeFormat, firstEvent.getBeginDate().getTime() -
+													 advance).toString();
+			eventAlarm = firstEvent.getBeginDate().getHours() * DateUtils.HOUR_IN_MILLIS +
+						 firstEvent.getBeginDate().getMinutes() * DateUtils.MINUTE_IN_MILLIS + 
+						 firstEvent.getBeginDate().getSeconds() * DateUtils.SECOND_IN_MILLIS -					
+						 advance;
+		}
+		
+		if (alarm.isEnabled()) {
+			
+			if (alarm.getWakeUpTimeout() < eventAlarm) {
+				alarmStr = DateFormat.format(timeFormat, alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS).toString();
+			}
+				
+		}
+	  
+	 
+	  dayAlarmAdvanceTime.setText(alarmStr);
 		
 	}
 	 

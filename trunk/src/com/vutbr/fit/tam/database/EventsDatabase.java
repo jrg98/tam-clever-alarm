@@ -97,40 +97,42 @@ public class EventsDatabase {
 			
 			// For a full list of available columns see this URL:
 			// http://www.google.com/codesearch/p?hl=en&sa=N&cd=3&ct=rc#uX1GffpyOZk/core/java/android/provider/Calendar.java
-
-			while (eventCursor.moveToNext()) {
-				
-				final String title = eventCursor.getString(0);
-				final Date begin = new Date(eventCursor.getLong(1));
-				final Date end = new Date(eventCursor.getLong(2));
-				final Boolean allDay = !eventCursor.getString(3).equals("0");
-				
-				//final boolean busy = eventCursor.getString(4).equals("1");
-				
-				boolean busy = false;
-				
-				final int color = Integer.parseInt(eventCursor.getString(5));
-				
-				// EDIT Android 2.1
-				if (eventCursor.getString(4) != null) {
-					busy = eventCursor.getString(4).equals("1");
-				}
-				
-				if ((status == EventsDatabase.STATUS_AVAILABLE && !busy) ||
-					(status == EventsDatabase.STATUS_BUSY && busy) ||
-					((status == EventsDatabase.STATUS_DONT_CARE))) {
-				
-					Event event = new Event();
-					event.setTitle(title);
-					event.setBeginDate(begin);
-					event.setEndDate(end);
-					event.setAllDayEvent(allDay);
-					event.setBusy(busy);
-					event.setColor(color);
+			
+			if (eventCursor != null) {
+				while (eventCursor.moveToNext()) {
 					
-					events.add(event);
+					final String title = eventCursor.getString(0);
+					final Date begin = new Date(eventCursor.getLong(1));
+					final Date end = new Date(eventCursor.getLong(2));
+					final Boolean allDay = !eventCursor.getString(3).equals("0");
+					
+					//final boolean busy = eventCursor.getString(4).equals("1");
+					
+					boolean busy = false;
+					
+					final int color = Integer.parseInt(eventCursor.getString(5));
+					
+					// EDIT Android 2.1
+					if (eventCursor.getString(4) != null) {
+						busy = eventCursor.getString(4).equals("1");
+					}
+					
+					if ((status == EventsDatabase.STATUS_AVAILABLE && !busy) ||
+						(status == EventsDatabase.STATUS_BUSY && busy) ||
+						((status == EventsDatabase.STATUS_DONT_CARE))) {
+					
+						Event event = new Event();
+						event.setTitle(title);
+						event.setBeginDate(begin);
+						event.setEndDate(end);
+						event.setAllDayEvent(allDay);
+						event.setBusy(busy);
+						event.setColor(color);
+						
+						events.add(event);
+					}
+					
 				}
-				
 			}
 		}
 		

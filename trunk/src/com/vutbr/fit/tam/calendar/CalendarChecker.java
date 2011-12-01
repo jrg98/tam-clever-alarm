@@ -64,7 +64,7 @@ public class CalendarChecker extends BroadcastReceiver {
 			Cursor cursorACT = aD.fetchAlarm(Alarm.ACTUAL_ALARM_ID);
 			Cursor cursorDAY = aD.fetchAlarm(dayID);
 			
-			e = eD.getFirstEvent(toDay, EventsDatabase.STATUS_AVAILABLE);
+			e = eD.getFirstEvent(toDay, EventsDatabase.STATUS_DONT_CARE);
 			
 			if (cursorDAY.moveToFirst()) {
 				Log.i("Calendar Checker", "Nacital sa den z databaze "+dayID);

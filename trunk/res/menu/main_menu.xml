@@ -5,9 +5,9 @@
 		android:icon="@drawable/button_settings"
 		android:title="@string/button_settings"
 	/>
-	<item
+	<!-- >item
 		android:id="@+id/button_main_menu_quit"
 		android:icon="@drawable/button_quit"
 		android:title="@string/button_quit"
-	/>	
+	/-->	
 </menu>

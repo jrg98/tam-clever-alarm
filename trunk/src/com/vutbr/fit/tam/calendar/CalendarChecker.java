@@ -48,7 +48,9 @@ public class CalendarChecker extends BroadcastReceiver {
 		
 		Log.i("Calendar checker", "Checking calendar....");
 		
-		c.startService(new Intent(c, WidgetRefreshService.class));
+		//c.startService(new Intent(c, WidgetRefreshService.class));
+		Intent intent=new Intent(c.getApplicationContext(),CleverAlarmWidgetProvider.class);
+		c.sendBroadcast(intent);
 		
 		AlarmAdapter aD;
 		Alarm dbAlarm;

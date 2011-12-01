@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -34,7 +35,9 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 	private TimePicker sleepTime;
 	private Button saveSleepMode;
 	private LinearLayout dayBackground;
+	private ScrollView scrollView;
 	
+	private boolean flag;
 	private int day;
 	private Alarm alarm;
 	
@@ -63,7 +66,7 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
         	this.dayBackground.setBackgroundResource(R.drawable.tab_today_bg);
     	}
 
-        
+        scrollView = (ScrollView) findViewById(R.id.scrollView3);
     }
     
     
@@ -76,6 +79,17 @@ public class Sleepmode extends Activity implements OnClickListener, Days {
 		this.showAlarm();
 		
 		this.sleepTime.setIs24HourView(is24hoursFormat());
+		
+	  	if (flag) {
+  	  	    
+	  		scrollView.post(new Runnable() {
+	  			public void run() {
+	  				scrollView.fullScroll(ScrollView.FOCUS_UP);
+	  	    	}
+	  	    });
+	        
+	  	 }
+	  	 flag = true;
 		
 	}
 	

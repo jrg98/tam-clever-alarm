@@ -154,16 +154,24 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
     	 map.put(Identifiers.DAY.toString(), this.getString(day));
     	 map.put(Identifiers.TODAY.toString(), String.valueOf(today));
 
+    	 
     	try {
 			aD = new AlarmAdapter(this).open();
 			Cursor cursorDAY = aD.fetchAlarm(index);
 						
 			if (cursorDAY.moveToFirst()) {
 				
+				Event event = this.getFirstDayEvent(index);
 				
-				if (cursorDAY.getInt(0) > 0) {
-					alarm = DateFormat.format(timeFormat, cursorDAY.getLong(2) - DateUtils.HOUR_IN_MILLIS).toString();
-					Log.v("TAAG",String.valueOf(cursorDAY.getLong(2)));
+				
+				if (event != null) {
+						alarm = DateFormat.format(timeFormat, event.getBeginDate().getTime() -
+															  cursorDAY.getLong(1)).toString();
+				}
+				else {
+					if (cursorDAY.getInt(0) > 0) {
+						alarm = DateFormat.format(timeFormat, cursorDAY.getLong(2) - DateUtils.HOUR_IN_MILLIS).toString();
+					}
 				}
 				
 				if (cursorDAY.getInt(4) > 0) {
@@ -198,6 +206,27 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 
 	}
 	
+    private Event getFirstDayEvent(int day) {
+    	
+    	EventsDatabase database = new EventsDatabase(this);
+        
+    	Date date = new Date();
+        int today = date.getDay();
+        
+        // How many days to choosen day
+        today = day - today;
+        if (today < 0) today += 7; 
+  
+    	Date from = new Date();
+    	final long startDay = from.getTime() - from.getHours() * DateUtils.HOUR_IN_MILLIS
+    			 							 - from.getMinutes() * DateUtils.MINUTE_IN_MILLIS
+    			 							 - from.getSeconds() * DateUtils.SECOND_IN_MILLIS;
+    				        	
+    	from.setTime(startDay + DateUtils.DAY_IN_MILLIS * (today));
+    	
+    	return database.getFirstEvent(from, EventsDatabase.STATUS_DONT_CARE);
+    	
+    }
     
     private String loadTimeFormat() {
     	

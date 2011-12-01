@@ -14,7 +14,6 @@ import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.vutbr.fit.tam.R;
 import com.vutbr.fit.tam.alarm.Alarm;
@@ -27,7 +26,9 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		
 	  private static Context context;
 	  private static AppWidgetManager appWidgetManager;
-	  private static int[] appWidgetIds; 
+	  private static int[] appWidgetIds;
+	  
+	  private boolean tomorrow; 
 	
 	  @Override
 	  public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -48,15 +49,11 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		  
 		  this.update();
 		  
-		  Log.v("Widget", "Widget on update");
-
-		  		  
 	  }
 	  
 	  @Override
 	  public void onReceive(Context context, Intent intent) {
 		  
-		  Log.v("Widget", "Widget on receive");
 		  this.update();
 		  super.onReceive(context, intent);
 		
@@ -69,11 +66,11 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		if (CleverAlarmWidgetProvider.context == null) {	
 			return;
 		}
-		  
-		Log.v("LOOG", "Widget update..");
-		
+		  		
 		Event nextEvent = this.getNextEvent(CleverAlarmWidgetProvider.context);
-		Alarm nextAlarm = this.getTodayAlarm(CleverAlarmWidgetProvider.context);
+		//Alarm nextAlarm = this.getTodayAlarm(CleverAlarmWidgetProvider.context);
+		
+		long alarmTime = this.getAlarmTime(CleverAlarmWidgetProvider.context);
 		
 		final String timeFormat = this.loadTimeFormat(context);
 		
@@ -96,17 +93,27 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 				}
 							
 				// Set info about alarm
-				if (nextAlarm.isEnabled()) {
-					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, DateFormat.format(timeFormat,
-												nextAlarm.getWakeUpTimeout() -
-												DateUtils.HOUR_IN_MILLIS).toString());
+				if (alarmTime > 0) {
+					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime,
+									DateFormat.format(timeFormat, alarmTime).toString());
+					
 				} else
 				{
 					remoteViews.setTextViewText(R.id.tvWidgetAlarmTime, "-");
 				}
+				
+				// if show tomorrow alarm - green text color
+				if (this.tomorrow) {
+					remoteViews.setTextColor(R.id.tvWidgetAlarmTime, 0xff00ff00);
+				}
+				else {
+					remoteViews.setTextColor(R.id.tvWidgetAlarmTime, 0xffffffff);	
+				}
+				
+				
 
 				// Set info about sleep mode
-				Boolean sleepMode = isSleepMode(CleverAlarmWidgetProvider.context); // TODO: load status from db
+				Boolean sleepMode = isSleepMode(CleverAlarmWidgetProvider.context);
 				this.sleepmMode(sleepMode, remoteViews, context);
 
 				appWidgetManager.updateAppWidget(widgetId, remoteViews);
@@ -136,10 +143,10 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	    	SettingsAdapter settingsAdapter = new SettingsAdapter(context);
 	    	settingsAdapter.open();
 	    	
-	    	final String sleepmode = settingsAdapter.fetchSetting("sleepmode", "false");
+	    	final int isSleepActive = Integer.parseInt(settingsAdapter.fetchSetting("isSleepActive", "0"));
 	    	settingsAdapter.close();
 	    	
-	    	return sleepmode.startsWith("true");
+	    	return (isSleepActive == 1);
 			
 		}
 	  
@@ -178,12 +185,12 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	 * @param context
 	 * @return today alarm
 	 */
-	private Alarm getTodayAlarm(Context context) {
+	private Alarm getAlarm(Context context, int id) {
 					
 		AlarmAdapter adapter;
 
 	  	Date date = new Date();
-	  	final int id = date.getDay();
+//	  	final int id = date.getDay();
 	  		  		
 	  	Alarm alarm = new Alarm(id, false, 0, 0, 0, false);
 		
@@ -214,7 +221,7 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	}
 	
 	/**
-	 * Load next event
+	 * Load first event in next 7 days
 	 * @param context
 	 * @return
 	 */
@@ -226,15 +233,98 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	  	from.setTime(from.getTime());
 	  	Date to = new Date();
 	  	to.setTime(to.getTime() + 7 * DateUtils.DAY_IN_MILLIS);
-	  	    	
-	  	// Load next event
+
+	  	Event firstEvent = null;
+	  	
+	  	// Load fist event in next 7 days
 		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_DONT_CARE)) {
-			return event;
+			
+			if (firstEvent == null) {
+				firstEvent = event;
+			}
+			
+			if (event.getBeginDate().compareTo(firstEvent.getBeginDate()) < 0) {
+				firstEvent = event;
+			}
+
 		}
 		
-		return null;
+		return firstEvent;
 		
 	}
+	
+	private long getAlarmTime(Context context) {
+		
+		Date date = new Date();
+		int day = date.getDay();
+		
+		boolean flag = false;
+		
+		Event event = getFirstDayEvent(context, day);
+		Alarm alarm = getAlarm(context, day);
+		
+		long alarmTime = -1;
+		
+		
+		if (event != null) {
+			alarmTime = event.getBeginDate().getTime() - alarm.getWakeUpOffset();
+		}
+		else {
+				alarmTime = alarm.getWakeUpTimeout();
+				flag = true;
+		}
+		
+		// If alarm was ringing today, show tomorow alarm
+		long time = date.getHours() * DateUtils.HOUR_IN_MILLIS +
+				    date.getMinutes() * DateUtils.MINUTE_IN_MILLIS +
+				    date.getSeconds() * DateUtils.SECOND_IN_MILLIS;
+		
+		if (time > alarmTime) {
+			
+			day = day + 1 % 7;
+			event = getFirstDayEvent(context, day);
+			alarm = getAlarm(context, day);
+			this.tomorrow = true;
+			
+			if (event != null) {
+				alarmTime = event.getBeginDate().getTime() - alarm.getWakeUpOffset();
+			}
+			else {
+				if (alarm.isEnabled()) {
+					alarmTime = alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS;
+				}
+			}
+			
+			
+			
+		}
+				
+		if (flag) alarmTime = alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS;
+		
+		return alarmTime;
+	}
+	
+    private Event getFirstDayEvent(Context context, int day) {
+    	
+    	EventsDatabase database = new EventsDatabase(context);
+        
+    	Date date = new Date();
+        int today = date.getDay();
+        
+        // How many days to choosen day
+        today = day - today;
+        if (today < 0) today += 7; 
+  
+    	Date from = new Date();
+    	final long startDay = from.getTime() - from.getHours() * DateUtils.HOUR_IN_MILLIS
+    			 							 - from.getMinutes() * DateUtils.MINUTE_IN_MILLIS
+    			 							 - from.getSeconds() * DateUtils.SECOND_IN_MILLIS;
+    				        	
+    	from.setTime(startDay + DateUtils.DAY_IN_MILLIS * (today));
+    	
+    	return database.getFirstEvent(from, EventsDatabase.STATUS_DONT_CARE);
+    	
+    }
 	  
 	  
 

@@ -33,14 +33,13 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	    public void onEnabled(Context context) {
 	        super.onEnabled(context);
 
-	        Log.v("Widget", "Widget onEnabled");
 			Intent intent=new Intent(context.getApplicationContext(),CleverAlarmWidgetProvider.class);
 			context.sendBroadcast(intent);
 	    } 	  
 	  
 	  @Override
 	  public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		  	
+		  
 		  RemoteViews remoteViews = new RemoteViews(context.getPackageName(),R.layout.widget);
 		  Intent intent = new Intent(context.getApplicationContext(), WidgetUpdateService.class);
 		  intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
@@ -67,27 +66,25 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		
 	  }
 
-		
+	  /**
+	   * Update widget
+	   * Load info from db and set into textviews 
+	   */
 	  private void update(Context context) {
 	  		  
 
-		  
 		// Receive broadcast but widget is not show
 		if (context == null) {
-			Log.d("Widget", "Context null");
 			return;
 		}
 		  		
-		Event nextEvent = this.getNextEvent(context);
-		//Alarm nextAlarm = this.getTodayAlarm(CleverAlarmWidgetProvider.context);
-		
+		Event nextEvent = this.getNextEvent(context);		
 		long alarmTime = this.getAlarmTime(context);
 		
 		final String timeFormat = this.loadTimeFormat(context);
 		
 		
 		if (appWidgetIds == null) {
-			Log.d("Widget", "ids null");
 			return;
 		}
 		
@@ -199,16 +196,13 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	}
 	
 	/**
-	 * Log
+	 * Get day alarm
 	 * @param context
 	 * @return today alarm
 	 */
 	private Alarm getAlarm(Context context, int id) {
 					
 		AlarmAdapter adapter;
-
-	  	Date date = new Date();
-//	  	final int id = date.getDay();
 	  		  		
 	  	Alarm alarm = new Alarm(id, false, 0, 0, 0, false);
 		
@@ -270,25 +264,34 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		
 	}
 	
+	/**
+	 * 
+	 * @param context
+	 * @return
+	 */
 	private long getAlarmTime(Context context) {
 		
 		Date date = new Date();
 		int day = date.getDay();
-		
-		boolean flag = false;
-		
+				
 		Event event = getFirstDayEvent(context, day);
 		Alarm alarm = getAlarm(context, day);
 		
-		long alarmTime = -1;
-		
+		long alarmTime = Long.MAX_VALUE;
 		
 		if (event != null) {
-			alarmTime = event.getBeginDate().getTime() - alarm.getWakeUpOffset();
+			
+			alarmTime = event.getBeginDate().getHours() * DateUtils.HOUR_IN_MILLIS +
+						event.getBeginDate().getMinutes() * DateUtils.MINUTE_IN_MILLIS + 
+						event.getBeginDate().getSeconds() * DateUtils.SECOND_IN_MILLIS -					
+						alarm.getWakeUpOffset();
+						
 		}
-		else {
+		
+		if (alarm.isEnabled()) {
+			if (alarm.getWakeUpTimeout() < alarmTime) {
 				alarmTime = alarm.getWakeUpTimeout();
-				flag = true;
+			}
 		}
 		
 		// If alarm was ringing today, show tomorow alarm
@@ -303,24 +306,39 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 			alarm = getAlarm(context, day);
 			this.tomorrow = true;
 			
+			alarmTime = Long.MAX_VALUE;
+			
 			if (event != null) {
-				alarmTime = event.getBeginDate().getTime() - alarm.getWakeUpOffset();
+				alarmTime = event.getBeginDate().getHours() * DateUtils.HOUR_IN_MILLIS +
+							event.getBeginDate().getMinutes() * DateUtils.MINUTE_IN_MILLIS + 
+							event.getBeginDate().getSeconds() * DateUtils.SECOND_IN_MILLIS -					
+							alarm.getWakeUpOffset();
 			}
-			else {
-				if (alarm.isEnabled()) {
-					alarmTime = alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS;
+			
+			if (alarm.isEnabled()) {
+				if (alarm.getWakeUpTimeout() < alarmTime) {
+					alarmTime = alarm.getWakeUpTimeout();
 				}
 			}
-			
-			
-			
+		}
+		
+						
+		if (alarmTime == Long.MAX_VALUE) {
+			alarmTime = -1;
+		}
+		else {
+			alarmTime -= DateUtils.HOUR_IN_MILLIS;
 		}
 				
-		if (flag) alarmTime = alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS;
-		
 		return alarmTime;
 	}
 	
+	/**
+	 * Get first next event from choosen day
+	 * @param context
+	 * @param day
+	 * @return
+	 */
     private Event getFirstDayEvent(Context context, int day) {
     	
     	EventsDatabase database = new EventsDatabase(context);

@@ -26,6 +26,7 @@ import com.vutbr.fit.tam.alarm.Alarm;
 import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.Days;
+import com.vutbr.fit.tam.widget.CleverAlarmWidgetProvider;
 import com.vutbr.fit.tam.widget.WidgetRefreshService;
 
 public class DayAlarm extends Activity implements OnClickListener, Days {
@@ -199,8 +200,9 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 		}
 		
 		// Actualize widget
-		startService(new Intent(this.getApplicationContext(), WidgetRefreshService.class));
-		
+		//startService(new Intent(this.getApplicationContext(), WidgetRefreshService.class));
+		Intent intent=new Intent(getApplicationContext(),CleverAlarmWidgetProvider.class);
+		sendBroadcast(intent);
 		
 	}
 	   

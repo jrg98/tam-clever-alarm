@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -34,6 +35,7 @@ import com.vutbr.fit.tam.database.AlarmAdapter;
 import com.vutbr.fit.tam.database.EventsDatabase;
 import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.Days;
+import com.vutbr.fit.tam.widget.CleverAlarmWidgetProvider;
 
 
 public class Day extends Activity implements Days, OnItemSelectedListener {
@@ -42,7 +44,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 		EVENT, BEGIN, END
 	};
 	
-	final private int timeMinutesAdvance[] = {1, 5, 10, 15, 30, 45};
+	final private int timeMinutesAdvance[] = {0, 1, 5, 10, 15, 30, 45};
 	final private int timeHoursAdvance[] = {1, 2, 3, 4, 5, 6, 8, 10, 12, 20};
 	
 	private TextView actualDay;
@@ -75,8 +77,12 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
         
         this.alarm = this.getDayAlarm(this.day);
         
+        String[] advanceArray = getTimeAdapterArray();
+	    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, advanceArray);
+	    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
+	    this.advance.setAdapter(spinnerArrayAdapter);
+	    this.advance.setOnItemSelectedListener(this);
   	  
-  	    
         // Set background
         Date date = new Date();
         if (date.getDay() == this.day ) {
@@ -101,16 +107,13 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
     	    this.loadDayEvents();
     	    this.createEventList();
           
-    	  if (this.firstEvent != null) {
+    	//  if (this.firstEvent != null) {
   	        
-  	        String[] advanceArray = getTimeAdapterArray();
-  	        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, advanceArray);
-  	        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
   	        
-  	        this.advance.setAdapter(spinnerArrayAdapter);
+  	        
   	        this.advance.setSelection(this.getAdvanceId());
-  	        this.advance.setOnItemSelectedListener(this);
-        }
+  	        
+    //    }
 
     	
     	
@@ -373,44 +376,33 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	//@Override
 	 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		
-		 
-	      if (this.firstEvent != null) {
-	    	  long advance = this.getWakeUpOffsetFromAdvanceId(pos);
-	    	  this.alarm.setWakeUpOffset(advance);
+		 long advance = this.getWakeUpOffsetFromAdvanceId(pos);
+	     this.alarm.setWakeUpOffset(advance);
 	    	
-	    	  this.setDayAlarmAdvanceTime(advance);
-	    	 
-	    	  // Kontrola zda nezasahuje do predchoziho dne..//TODO:
-	    	 
-	      }
+	     this.setDayAlarmAdvanceTime(advance);
+	    	 	    	  
+	      		// Save
+	     AlarmAdapter adapter;
 	    	  
-	      
-	      	// Save
-	    	  AlarmAdapter adapter;
-	    	  
-	    	  try {
+	     try {
 	  			
-	  			adapter = new AlarmAdapter(this).open();
+	    	 adapter = new AlarmAdapter(this).open();
 	  			
-	  			if (!adapter.updateAlarm(this.alarm)) {
+	    	 if (!adapter.updateAlarm(this.alarm)) {
 	  				adapter.insertAlarm(this.alarm);
-	  			}
+	    	 }
 	  			
-	  			adapter.close();
+	  		 adapter.close();
 	  			
-	  			/*
-	  			if (this.alarm.isEnabled()) {
-	  				Toast.makeText(this, this.getResources().getString(R.string.advance_set), Toast.LENGTH_SHORT).show();
-	  			} else {
-	  				Toast.makeText(this, this.getResources().getString(R.string.advance_not_set), Toast.LENGTH_SHORT).show();
-	  			}
-	  			*/
-	  			
-	  		} catch (Exception ex) {
-	  			Log.e("TimeAdvance", "AlarmAdapter error: "+ ex.toString());
-	  		}
+	     } catch (Exception ex) {
+	    	 Log.e("TimeAdvance", "AlarmAdapter error: "+ ex.toString());
+	     }
 	    	  
-	      
+	    
+	    // Send broadcast update to widget
+	  	Intent intent=new Intent(getApplicationContext(),CleverAlarmWidgetProvider.class);
+		sendBroadcast(intent);
+	    	  
 	    }
 	 
 	public void setDayAlarmAdvanceTime(long advance) {
@@ -437,7 +429,6 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 				
 		}
 	  
-	 
 	  dayAlarmAdvanceTime.setText(alarmStr);
 		
 	}

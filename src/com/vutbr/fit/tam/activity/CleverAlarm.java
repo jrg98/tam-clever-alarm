@@ -168,7 +168,11 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 				if (event != null) {
 						alarm = DateFormat.format(timeFormat, event.getBeginDate().getTime() -
 															  cursorDAY.getLong(1)).toString();
-						eventAlarm = event.getBeginDate().getTime() - cursorDAY.getLong(1);
+						
+						eventAlarm = event.getBeginDate().getHours() * DateUtils.HOUR_IN_MILLIS +
+									 event.getBeginDate().getMinutes() * DateUtils.MINUTE_IN_MILLIS + 
+									 event.getBeginDate().getSeconds() * DateUtils.SECOND_IN_MILLIS -					
+									 cursorDAY.getLong(1);
 				}
 				
 				if (cursorDAY.getInt(0) > 0) {

@@ -102,7 +102,8 @@ public class CalendarChecker extends BroadcastReceiver {
 				actAlarm = dayAlarm;
 				actSleep = daySleep;
 				addNewAlarm(aD, actAlarm, actSleep, c);
-				setAlarmTime(actAlarm, c);
+				if (actAlarm > currentTime) setAlarmTime(actAlarm, c);
+				if (actSleep > currentTime) setSleepTime(actSleep, c);
 				alarmActive = true;
 			}
 			
@@ -136,6 +137,9 @@ public class CalendarChecker extends BroadcastReceiver {
 						Log.i("Calendar Checker", "Updatuje sa alarm");
 						updateExistingAlarm(aD, dayAlarm, daySleep, c);
 					} else {
+						Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, daySleep, dayAlarm, true);
+						aD.updateAlarm(a);
+						
 						NotificationHelper h = new NotificationHelper(c);
 						h.show(
 				        		R.string.app_name, 

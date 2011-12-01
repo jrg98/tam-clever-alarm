@@ -16,6 +16,7 @@ import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -33,11 +34,13 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 	private RadioButton alarmOn;
 	private RadioButton alarmOff;
 	private Button saveAlarm;
+	private ScrollView scrollView;
 	
 	private TextView actualDay;
 	private LinearLayout dayBackground;
 	private int day;
 	
+	private boolean flag;
 	private Alarm alarm;
 
 	
@@ -66,8 +69,7 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
         	this.dayBackground.setBackgroundResource(R.drawable.tab_today_bg);
     	}
     
-        //android:id="@+id/tab_day_background" 
-        	    //android:background="@drawable/tab_day_bg"
+        scrollView = (ScrollView) findViewById(R.id.scrollView2);
         
     }
 	
@@ -81,6 +83,16 @@ public class DayAlarm extends Activity implements OnClickListener, Days {
 		// update if change settings
 		this.alarmTime.setIs24HourView(is24hoursFormat());
 		
+	  	if (flag) {
+	  	  	    
+	  		scrollView.post(new Runnable() {
+	  			public void run() {
+	  				scrollView.fullScroll(ScrollView.FOCUS_UP);
+	  	    	}
+	  	    });
+	        
+	  	 }
+	  	 flag = true;
 	}
 	
 	private void setAlarmIndicatorOn(boolean value) {

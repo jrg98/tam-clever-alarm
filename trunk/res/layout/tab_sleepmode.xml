@@ -8,7 +8,7 @@
     android:id="@+id/tab_day_background" 
     android:background="@drawable/tab_day_bg"
     >
-    <ScrollView android:layout_height="wrap_content" android:id="@+id/scrollView1" android:layout_width="match_parent">
+    <ScrollView android:layout_height="wrap_content" android:id="@+id/scrollView3" android:layout_width="match_parent">
     <LinearLayout
 		android:layout_height="fill_parent"
      	android:id="@+id/linearLayout1" 

@@ -79,6 +79,6 @@
     <string name="settings_ringmode">Ringing in sleepmode:</string>
     <string name="silent">Silent</string>
     <string name="vibrate">Vibrate</string>
-    <string name="alarm_missed">An alarm occured while the device was switched off.</string>
+    <string name="alarm_missed">An alarm missed event, is in past.</string>
     
 </resources>

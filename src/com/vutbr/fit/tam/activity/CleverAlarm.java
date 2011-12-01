@@ -192,7 +192,7 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 
 			}
 			
-			if (alarm == null) {
+			if (alarm == null || !(cursorDAY.getInt(0) > 0)) {
 				alarm = this.getResources().getString(R.string.not_set) ;				
 			}
 			
@@ -303,9 +303,9 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
     		case R.id.button_main_menu_settings:
     			this.showSettings();
     			break;
-    		case R.id.button_main_menu_quit:
-    			this.quit();
-    			break;
+    		//case R.id.button_main_menu_quit:
+    			//this.quit();
+    			//break;
     		default:	
     			return super.onOptionsItemSelected(item);
     	}
@@ -325,7 +325,6 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
     }
     
     private void quit() {
-    	this.notificationHelper.cancel(NotificationHelper.TYPE_APPLICATION);
     	this.finish();
     }
 

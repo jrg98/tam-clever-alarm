@@ -1,13 +1,11 @@
 package com.vutbr.fit.tam.activity;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -25,8 +23,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -35,14 +31,11 @@ import com.vutbr.fit.tam.calendar.CalendarChecker;
 import com.vutbr.fit.tam.calendar.ChangeObserver;
 import com.vutbr.fit.tam.calendar.Event;
 import com.vutbr.fit.tam.database.AlarmAdapter;
-import com.vutbr.fit.tam.database.AlarmTable;
 import com.vutbr.fit.tam.database.EventsDatabase;
 import com.vutbr.fit.tam.database.SettingsAdapter;
 import com.vutbr.fit.tam.gui.DaySimpleAdapter;
 import com.vutbr.fit.tam.gui.Days;
 import com.vutbr.fit.tam.nofitication.NotificationHelper;
-import com.vutbr.fit.tam.widget.WidgetRefreshService;
-import com.vutbr.fit.tam.alarm.Alarm;
 
 
 
@@ -182,9 +175,6 @@ public class CleverAlarm extends Activity implements OnItemClickListener, Days {
 					}
 						
 				}
-				
-				
-				
 				
 				if (cursorDAY.getInt(4) > 0) {
 					sleepmode = DateFormat.format(timeFormat, cursorDAY.getLong(3) - DateUtils.HOUR_IN_MILLIS).toString();

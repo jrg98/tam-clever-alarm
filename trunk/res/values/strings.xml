@@ -80,5 +80,6 @@
     <string name="silent">Silent</string>
     <string name="vibrate">Vibrate</string>
     <string name="alarm_missed">An alarm missed event, is in past.</string>
+    <string name="loading">Loading...</string>
     
 </resources>

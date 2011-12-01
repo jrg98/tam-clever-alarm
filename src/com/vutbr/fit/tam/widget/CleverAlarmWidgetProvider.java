@@ -24,12 +24,20 @@ import com.vutbr.fit.tam.database.SettingsAdapter;
 
 public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		
-	  private static Context context;
 	  private static AppWidgetManager appWidgetManager;
 	  private static int[] appWidgetIds;
 	  
 	  private boolean tomorrow; 
 	
+	    @Override
+	    public void onEnabled(Context context) {
+	        super.onEnabled(context);
+
+	        Log.v("Widget", "Widget onEnabled");
+			Intent intent=new Intent(context.getApplicationContext(),CleverAlarmWidgetProvider.class);
+			context.sendBroadcast(intent);
+	    } 	  
+	  
 	  @Override
 	  public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		  	
@@ -43,36 +51,45 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 		  appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
 		  
 		  // Static access
-		  CleverAlarmWidgetProvider.context = context;
+		  Log.d("Widget", String.valueOf(appWidgetIds.length));
 		  CleverAlarmWidgetProvider.appWidgetManager = appWidgetManager;
 		  CleverAlarmWidgetProvider.appWidgetIds = appWidgetIds;
 		  
-		  this.update();
+		  this.update(context);
 		  
 	  }
 	  
 	  @Override
 	  public void onReceive(Context context, Intent intent) {
 		  
-		  this.update();
+		  this.update(context);
 		  super.onReceive(context, intent);
 		
 	  }
 
 		
-	  private void update() {
+	  private void update(Context context) {
 	  		  
+
+		  
 		// Receive broadcast but widget is not show
-		if (CleverAlarmWidgetProvider.context == null) {	
+		if (context == null) {
+			Log.d("Widget", "Context null");
 			return;
 		}
 		  		
-		Event nextEvent = this.getNextEvent(CleverAlarmWidgetProvider.context);
+		Event nextEvent = this.getNextEvent(context);
 		//Alarm nextAlarm = this.getTodayAlarm(CleverAlarmWidgetProvider.context);
 		
-		long alarmTime = this.getAlarmTime(CleverAlarmWidgetProvider.context);
+		long alarmTime = this.getAlarmTime(context);
 		
 		final String timeFormat = this.loadTimeFormat(context);
+		
+		
+		if (appWidgetIds == null) {
+			Log.d("Widget", "ids null");
+			return;
+		}
 		
 		// Actualize all showed widget
 		if (appWidgetIds.length > 0) {
@@ -82,6 +99,7 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 				
 				// Set info about next event
 				if (nextEvent != null) {
+					Log.d("Widget", nextEvent.getTitle());
 					remoteViews.setTextViewText(R.id.tvWidgetNextEventName, nextEvent.getTitle());
 					String nEventStr = nextEvent.getBeginDate().toLocaleString();
 					nEventStr = nEventStr.substring(0, nEventStr.length() - 3);
@@ -113,7 +131,7 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 				
 
 				// Set info about sleep mode
-				Boolean sleepMode = isSleepMode(CleverAlarmWidgetProvider.context);
+				Boolean sleepMode = isSleepMode(context);
 				this.sleepmMode(sleepMode, remoteViews, context);
 
 				appWidgetManager.updateAppWidget(widgetId, remoteViews);
@@ -238,7 +256,6 @@ public class CleverAlarmWidgetProvider extends AppWidgetProvider {
 	  	
 	  	// Load fist event in next 7 days
 		for (Event event : database.getEvents(from, to, EventsDatabase.STATUS_DONT_CARE)) {
-			
 			if (firstEvent == null) {
 				firstEvent = event;
 			}

@@ -241,7 +241,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 		
 			this.daysEventListView.setAdapter(adapter);
 			
-			final int height = 60;
+			final int height = 90;
 			
 			ViewGroup.LayoutParams params = daysEventListView.getLayoutParams();
 			

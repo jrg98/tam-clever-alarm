@@ -78,6 +78,8 @@ public class CalendarChecker extends BroadcastReceiver {
 			} else {
 				// ak nie je ziadny obsah v tabulke pre dany den, nic sa nedeje
 				Log.e("CalendarChecker", "Empty DB.");
+				this.cancelAlarm(c);
+				this.cancelSleep(c);
 				aD.close();
 				return;
 			}
@@ -121,6 +123,10 @@ public class CalendarChecker extends BroadcastReceiver {
 					if (daySleep > currentTime) {
 						Log.i("Calendar Checker", "Updatuje sa sleep");
 						updateExistingSleep(aD, dayAlarm, daySleep, c);
+					} else {
+						this.cancelSleep(c);
+						Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, daySleep, dayAlarm, true);
+						aD.updateAlarm(a);
 					}
 				}
 			}
@@ -137,6 +143,7 @@ public class CalendarChecker extends BroadcastReceiver {
 						Log.i("Calendar Checker", "Updatuje sa alarm");
 						updateExistingAlarm(aD, dayAlarm, daySleep, c);
 					} else {
+						this.cancelAlarm(c);
 						Alarm a = new Alarm(Alarm.ACTUAL_ALARM_ID, true, 0, daySleep, dayAlarm, true);
 						aD.updateAlarm(a);
 						

@@ -53,7 +53,7 @@
 	<string name="button_settings_ringtones_description">Set the ringtone for alarm</string>
 	<string name="select_ringtone">Select ringtone</string>
 	<string name="test_ringing">Test ringing</string>
-	<string name="ringing_text">Wake up you lazy bitch!</string>
+	<string name="ringing_text">Clever Alarm</string>
 	<string name="current_ringtone_name">Current ringtone:</string>
 	<string name="no_ringtone">No rigntone selected!</string>
 	<string name="ringing_button_stop">Stop</string>

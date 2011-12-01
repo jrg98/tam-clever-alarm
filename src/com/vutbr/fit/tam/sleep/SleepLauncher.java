@@ -35,6 +35,8 @@ public class SleepLauncher extends BroadcastReceiver {
 		isSleepActive = Integer.parseInt(settingsAdapter.fetchSetting("isSleepActive", "0"));
 		sleepRingMode = Integer.parseInt(settingsAdapter.fetchSetting("sleepRingMode", "0"));
 	
+		if (audioManager.getRingerMode() != sleepRingMode) isSleepActive = 0;
+		
 		if (isSleepActive == 0) {
 			if (!settingsAdapter.updateSetting("sleepRingModeB", Integer.toString(audioManager.getRingerMode())))
 	        	settingsAdapter.insertSetting("sleepRingModeB", Integer.toString(audioManager.getRingerMode()));

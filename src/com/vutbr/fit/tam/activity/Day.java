@@ -120,7 +120,12 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	    }
 	    else {
 	    	final long alarmWithAdvance = alarm.getWakeUpTimeout() - DateUtils.HOUR_IN_MILLIS;
-	    	dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarmWithAdvance).toString());
+	    	if (alarm.isEnabled()) {
+	    		dayAlarmAdvanceTime.setText(DateFormat.format(timeFormat, alarmWithAdvance).toString());
+	    	}
+	    	else {
+	    		dayAlarmAdvanceTime.setText(this.getResources().getString(R.string.not_set));
+	    	}
 	    }
 	    
   	  //ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView1);
@@ -411,7 +416,7 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 	public void setDayAlarmAdvanceTime(long advance) {
 		
 		final String timeFormat = this.loadTimeFormat();
-		String alarmStr = this.getResources().getString(R.string.alarm_not_set);
+		String alarmStr = this.getResources().getString(R.string.not_set);
 		
 	    long eventAlarm = Long.MAX_VALUE;
 		

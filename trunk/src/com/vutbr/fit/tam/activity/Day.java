@@ -428,6 +428,12 @@ public class Day extends Activity implements Days, OnItemSelectedListener {
 			}
 				
 		}
+		else {
+		   
+		   alarmStr = this.getResources().getString(R.string.not_set);
+		   
+		}
+		  
 	  
 	  dayAlarmAdvanceTime.setText(alarmStr);
 		
